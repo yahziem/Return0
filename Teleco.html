@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Teleco Repair - Especialistas en reparación de teléfonos, computadoras y tablets">
+  <meta name="theme-color" content="#0f2027">
+  <title>BY RETURN 0 | Teleco Repair - Reparación de Dispositivos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+      color: white;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+      width: 100%;
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .brand {
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: #00d4ff;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      font-weight: 600;
+      animation: slideUp 0.6s ease-out 0.1s both;
+    }
+
+    .logo {
+      width: 140px;
+      height: auto;
+      margin: 15px auto 20px;
+      display: block;
+      border-radius: 15px;
+      box-shadow: 0 15px 35px rgba(0, 212, 255, 0.2);
+      animation: slideUp 0.6s ease-out 0.2s both;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+      box-shadow: 0 20px 45px rgba(0, 212, 255, 0.4);
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #00d4ff, #00f0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: slideUp 0.6s ease-out 0.3s both;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 400;
+      color: #b0c4de;
+      margin-bottom: 20px;
+      animation: slideUp 0.6s ease-out 0.4s both;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      padding: 30px 25px;
+      border-radius: 20px;
+      margin-top: 25px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.6s ease-out 0.5s both;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(0, 212, 255, 0.4);
+      box-shadow: 0 20px 45px rgba(0, 212, 255, 0.15);
+    }
+
+    .services-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #00d4ff;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    @media (max-width: 480px) {
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .service {
+      padding: 15px;
+      background: rgba(0, 212, 255, 0.08);
+      border-radius: 12px;
+      border-left: 3px solid #00d4ff;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      animation: slideUp 0.6s ease-out forwards;
+    }
+
+    .service:nth-child(1) { animation-delay: 0.6s; }
+    .service:nth-child(2) { animation-delay: 0.65s; }
+    .service:nth-child(3) { animation-delay: 0.7s; }
+    .service:nth-child(4) { animation-delay: 0.75s; }
+
+    .service:hover {
+      background: rgba(0, 212, 255, 0.15);
+      transform: translateX(5px);
+    }
+
+    .service-icon {
+      font-size: 24px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .service-text {
+      font-weight: 600;
+      color: #00d4ff;
+    }
+
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+      margin: 20px auto;
+    }
+
+    .btn-whatsapp {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 16px 35px;
+      font-size: 16px;
+      color: white;
+      background: linear-gradient(135deg, #25D366, #20a850);
+      border: none;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+      animation: slideUp 0.6s ease-out 0.8s both;
+    }
+
+    .btn-whatsapp:hover {
+      background: linear-gradient(135deg, #20a850, #1a8a40);
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(37, 211, 102, 0.4);
+    }
+
+    .btn-whatsapp:active {
+      transform: translateY(-1px);
+    }
+
+    .phone {
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #00d4ff;
+      animation: slideUp 0.6s ease-out 0.85s both;
+    }
+
+    .phone a {
+      color: #00d4ff;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .phone a:hover {
+      color: #00f0ff;
+      text-decoration: underline;
+    }
+
+    footer {
+      margin-top: 25px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      animation: slideUp 0.6s ease-out 0.9s both;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 24px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .btn-whatsapp {
+        padding: 14px 30px;
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+    <header>
+      <div class="brand">⚡ BY RETURN 0</div>
+      <img src="Tl.jpg" alt="Teleco Repair - Logo" class="logo">
+      <h1>Teleco Repair</h1>
+      <h2>¡Dale nueva vida a tus dispositivos!</h2>
+    </header>
+
+    <article class="card">
+      <div class="services-title">Especialistas en reparación de:</div>
+
+      <div class="services-grid">
+        <div class="service">
+          <span class="service-icon">📱</span>
+          <span class="service-text">Teléfonos</span>
+          <small>Pantallas, baterías y más</small>
+        </div>
+        <div class="service">
+          <span class="service-icon">💻</span>
+          <span class="service-text">Computadoras</span>
+          <small>Optimización y reparación</small>
+        </div>
+        <div class="service">
+          <span class="service-icon">📟</span>
+          <span class="service-text">Tablets</span>
+          <small>Soluciones rápidas</small>
+        </div>
+        <div class="service">
+          <span class="service-icon">✅</span>
+          <span class="service-text">Garantía</span>
+          <small>Calidad garantizada</small>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <a class="btn-whatsapp"
+         href="https://wa.me/524443727802?text=Hola,%20quiero%20información%20sobre%20reparación%20de%20dispositivos"
+         target="_blank"
+         rel="noopener noreferrer">
+         📲 Contactar por WhatsApp
+      </a>
+
+      <div class="phone">
+        ☎️ <a href="tel:+524443727802">444 372 7802</a>
+      </div>
+    </article>
+
+    <footer>
+      <p>© 2026 Teleco Repair. Todos los derechos reservados.</p>
+    </footer>
+
+  </main>
+
+</body>
+</html>
