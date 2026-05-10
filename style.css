@@ -22,6 +22,7 @@ width:100%;
 background:rgba(10,10,10,.7);
 backdrop-filter:blur(10px);
 border-bottom:1px solid var(--border);
+z-index:999;
 }
 
 .nav{
@@ -59,9 +60,21 @@ align-items:center;
 justify-content:center;
 text-align:center;
 background:radial-gradient(circle,#111,#000);
+position:relative;
+overflow:hidden;
 }
 
-.hero-box{max-width:600px}
+.hero-bg{
+position:absolute;
+width:100%;
+height:100%;
+object-fit:cover;
+opacity:0.15;
+z-index:0;
+filter:brightness(0.3);
+}
+
+.hero-box{max-width:600px;position:relative;z-index:1}
 
 .hero h1{font-size:40px}
 .hero p{color:var(--soft);margin-top:10px}
