@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Nuestro Equipo - Return 0 & Associates</title>
+<meta name="description" content="Conoce al equipo de expertos de Return 0 & Associates">
+
+<link rel="icon" href="con.png">
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+.team-member {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 60px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  flex-wrap: wrap;
+}
+
+.team-member.reverse {
+  flex-direction: row-reverse;
+}
+
+.team-member img {
+  width: 300px;
+  height: 300px;
+  border-radius: 15px;
+  border: 1px solid var(--border);
+  object-fit: cover;
+}
+
+.team-info {
+  flex: 1;
+  min-width: 300px;
+  text-align: left;
+}
+
+.team-info h3 {
+  font-size: 28px;
+  margin-bottom: 5px;
+  color: var(--primary);
+}
+
+.team-info .role {
+  color: var(--soft);
+  font-size: 14px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+.team-info p {
+  color: var(--soft);
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+  .team-member {
+    flex-direction: column !important;
+    gap: 20px;
+  }
+  
+  .team-member img {
+    width: 250px;
+    height: 250px;
+  }
+  
+  .team-info h3 {
+    font-size: 22px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="nav">
+    <div class="logo-wrap">
+      <img src="con.png" class="logo">
+      <span>Return 0 <strong>& Associates</strong></span>
+    </div>
+
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="index.html#services">Servicios</a>
+      <a href="Equipo.html" style="color: #00e5ff;">Equipo</a>
+      <a href="index.html#contact" class="btn-small">Contacto</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-box">
+    <h1>Nuestro Equipo</h1>
+    <p>Los expertos detrás de Return 0 & Associates</p>
+  </div>
+</section>
+
+<!-- EQUIPO -->
+<section>
+  <h2>Liderazgo</h2>
+  <p class="sub">Profesionales con experiencia en desarrollo, seguridad e infraestructura</p>
+
+  <!-- CEO -->
+  <div class="team-member">
+    <img src="CEO.png" alt="Yahzi Emiliano Martinez Garcia - CEO">
+    <div class="team-info">
+      <h3>Yahzi Emiliano Martinez Garcia</h3>
+      <p class="role">CEO & Founder</p>
+      <p>Visión estratégica y liderazgo en soluciones tecnológicas de alto impacto. Con más de 5 años de experiencia en desarrollo web, ciberseguridad e infraestructura, ha dirigido la transformación digital de decenas de empresas.</p>
+      <p>Especializado en arquitectura de sistemas, seguridad informática y optimización de procesos empresariales. Comprometido con la excelencia y la innovación continua.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- DESARROLLO -->
+<section>
+  <h2>Área de Desarrollo</h2>
+  <p class="sub">Expertos en soluciones web y móviles</p>
+
+  <!-- Líder de Desarrollo -->
+  <div class="team-member reverse">
+    <img src="desarrollo-lead.png" alt="Líder Técnico de Desarrollo">
+    <div class="team-info">
+      <h3>Líder Técnico - Desarrollo</h3>
+      <p class="role">Development Director</p>
+      <p>Lidera el equipo de desarrollo en la creación de plataformas web modernas, escalables y de alto rendimiento. Experto en arquitectura de software y mejores prácticas de desarrollo ágil.</p>
+      <p>Especializado en Full Stack, React, Node.js y optimización de aplicaciones empresariales. Garantiza código limpio, seguro y mantenible.</p>
+    </div>
+  </div>
+
+  <!-- Desarrollador Senior -->
+  <div class="team-member">
+    <img src="developer-senior.png" alt="Desarrollador Senior">
+    <div class="team-info">
+      <h3>Desarrollador Senior</h3>
+      <p class="role">Senior Full Stack Developer</p>
+      <p>Implementa soluciones complejas con tecnologías modernas. Responsable de la calidad del código y la documentación técnica de proyectos estratégicos.</p>
+      <p>Experiencia en APIs REST, bases de datos, CI/CD y deployment en producción. Mentor de desarrolladores junior.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- CIBERSEGURIDAD -->
+<section>
+  <h2>Área de Ciberseguridad</h2>
+  <p class="sub">Protección y auditoría de sistemas</p>
+
+  <!-- Especialista en Seguridad -->
+  <div class="team-member reverse">
+    <img src="seguridad-lead.png" alt="Especialista en Ciberseguridad">
+    <div class="team-info">
+      <h3>Especialista en Ciberseguridad</h3>
+      <p class="role">Security Lead</p>
+      <p>Diseña estrategias integrales de seguridad informática y realiza auditorías de vulnerabilidades. Responsable de proteger la infraestructura y datos sensibles de nuestros clientes.</p>
+      <p>Certificado en seguridad ofensiva, análisis de amenazas y conformidad regulatoria (GDPR, ISO 27001). Experto en penetration testing y hardening de sistemas.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- INFRAESTRUCTURA -->
+<section>
+  <h2>Área de Infraestructura</h2>
+  <p class="sub">Optimización y monitoreo de sistemas</p>
+
+  <!-- Ingeniero de Infraestructura -->
+  <div class="team-member">
+    <img src="infraestructura.png" alt="Ingeniero de Infraestructura">
+    <div class="team-info">
+      <h3>Ingeniero de Infraestructura</h3>
+      <p class="role">Infrastructure Engineer</p>
+      <p>Diseña, implementa y mantiene infraestructuras robustas y escalables. Especialista en cloud computing, containerización y automatización de procesos.</p>
+      <p>Experto en AWS, Docker, Kubernetes, CI/CD y monitoreo 24/7. Garantiza alta disponibilidad y disaster recovery de sistemas críticos.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Únete a nuestro equipo</h2>
+  <p>Estamos buscando talentos apasionados por la tecnología</p>
+  <a href="index.html#contact" class="btn">Contacta con nosotros</a>
+</section>
+
+<!-- CONTACTO -->
+<section id="contact">
+  <h2>¿Listo para trabajar con nosotros?</h2>
+
+  <form class="form">
+    <input type="text" placeholder="Nombre" required>
+    <input type="email" placeholder="Correo" required>
+    <textarea placeholder="Describe tu proyecto"></textarea>
+    <button class="btn">Enviar</button>
+  </form>
+</section>
+
+<footer>
+  <p>© 2026 Return 0 & Associates</p>
+</footer>
+
+</body>
+</html>
