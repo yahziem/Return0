@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Teleco Repair | Sistema de Facturación</title>
+
+  <link rel="icon" href="Tl.jpg">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family:'Poppins',sans-serif;
+      background:linear-gradient(135deg,#0f2027 0%,#203a43 50%,#2c5364 100%);
+      color:white;
+      min-height:100vh;
+      padding:30px 15px;
+    }
+
+    .container{
+      max-width:1200px;
+      margin:auto;
+      animation:fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn{
+      from{
+        opacity:0;
+        transform:translateY(20px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:20px;
+      margin-bottom:30px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:15px;
+    }
+
+    .logo{
+      width:90px;
+      border-radius:18px;
+      box-shadow:0 10px 25px rgba(0,212,255,0.25);
+    }
+
+    .brand-text h1{
+      font-size:32px;
+      background:linear-gradient(135deg,#00d4ff,#00f0ff);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .brand-text p{
+      color:#b8d4e3;
+      font-size:14px;
+      margin-top:5px;
+    }
+
+    .panel{
+      background:rgba(255,255,255,0.08);
+      backdrop-filter:blur(12px);
+      border:1px solid rgba(0,212,255,0.2);
+      border-radius:25px;
+      padding:30px;
+      box-shadow:0 15px 40px rgba(0,0,0,0.35);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:25px;
+    }
+
+    @media(max-width:900px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .section-title{
+      font-size:20px;
+      margin-bottom:20px;
+      color:#00d4ff;
+      font-weight:600;
+    }
+
+    .input-group{
+      margin-bottom:18px;
+      text-align:left;
+    }
+
+    label{
+      display:block;
+      margin-bottom:8px;
+      color:#d8ecf5;
+      font-size:14px;
+      font-weight:500;
+    }
+
+    input, textarea{
+      width:100%;
+      padding:14px;
+      border:none;
+      outline:none;
+      border-radius:12px;
+      background:rgba(255,255,255,0.08);
+      color:white;
+      border:1px solid rgba(255,255,255,0.08);
+      font-family:'Poppins',sans-serif;
+      transition:0.3s;
+    }
+
+    input:focus,
+    textarea:focus{
+      border-color:#00d4ff;
+      box-shadow:0 0 15px rgba(0,212,255,0.25);
+    }
+
+    input::placeholder,
+    textarea::placeholder{
+      color:#a7bac5;
+    }
+
+    .items{
+      margin-top:20px;
+    }
+
+    .item{
+      display:grid;
+      grid-template-columns:2fr 1fr 1fr;
+      gap:12px;
+      margin-bottom:12px;
+    }
+
+    @media(max-width:600px){
+      .item{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .btn{
+      border:none;
+      cursor:pointer;
+      padding:15px 22px;
+      border-radius:14px;
+      font-weight:600;
+      font-size:15px;
+      transition:0.3s;
+      font-family:'Poppins',sans-serif;
+    }
+
+    .btn-add{
+      background:linear-gradient(135deg,#00b4db,#0083b0);
+      color:white;
+      margin-top:10px;
+    }
+
+    .btn-add:hover{
+      transform:translateY(-2px);
+      box-shadow:0 10px 20px rgba(0,212,255,0.25);
+    }
+
+    .btn-generate{
+      width:100%;
+      margin-top:25px;
+      background:linear-gradient(135deg,#25D366,#20a850);
+      color:white;
+      font-size:17px;
+    }
+
+    .btn-generate:hover{
+      transform:translateY(-3px);
+      box-shadow:0 15px 30px rgba(37,211,102,0.35);
+    }
+
+    .invoice{
+      background:white;
+      color:#222;
+      border-radius:20px;
+      padding:35px;
+      margin-top:25px;
+      display:none;
+      animation:fadeIn 0.6s ease;
+    }
+
+    .invoice-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:20px;
+      border-bottom:2px solid #eee;
+      padding-bottom:20px;
+      margin-bottom:25px;
+    }
+
+    .invoice-header img{
+      width:90px;
+      border-radius:12px;
+    }
+
+    .invoice h2{
+      color:#0f2027;
+      margin-bottom:5px;
+    }
+
+    .invoice p{
+      margin:4px 0;
+    }
+
+    .invoice-table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:20px;
+    }
+
+    .invoice-table th{
+      background:#0f2027;
+      color:white;
+      padding:12px;
+      text-align:left;
+    }
+
+    .invoice-table td{
+      padding:12px;
+      border-bottom:1px solid #ddd;
+    }
+
+    .totals{
+      margin-top:25px;
+      text-align:right;
+    }
+
+    .totals p{
+      font-size:18px;
+      margin-bottom:10px;
+    }
+
+    .restante{
+      font-size:30px !important;
+      color:#20a850;
+      font-weight:700;
+    }
+
+    .footer{
+      margin-top:30px;
+      text-align:center;
+      color:#777;
+      font-size:14px;
+    }
+
+    .print-btn{
+      margin-top:20px;
+      background:linear-gradient(135deg,#00d4ff,#0083b0);
+      color:white;
+      width:100%;
+    }
+
+    .print-btn:hover{
+      transform:translateY(-3px);
+    }
+
+    @media print{
+
+      body{
+        background:white;
+      }
+
+      .panel,
+      .topbar,
+      .btn{
+        display:none;
+      }
+
+      .invoice{
+        display:block !important;
+        box-shadow:none;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="topbar">
+
+      <div class="brand">
+
+        <img src="Tl.jpg" class="logo">
+
+        <div class="brand-text">
+          <h1>Teleco Repair</h1>
+          <p>Sistema Profesional de Facturación</p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel">
+
+      <div class="grid">
+
+        <!-- CLIENTE -->
+
+        <div>
+
+          <h2 class="section-title">📋 Datos del Cliente</h2>
+
+          <div class="input-group">
+            <label>Nombre del Cliente</label>
+            <input type="text" id="cliente" placeholder="Ej. Juan Pérez">
+          </div>
+
+          <div class="input-group">
+            <label>Teléfono</label>
+            <input type="text" id="telefono" placeholder="444 000 0000">
+          </div>
+
+          <div class="input-group">
+            <label>Correo</label>
+            <input type="email" id="correo" placeholder="cliente@email.com">
+          </div>
+
+          <div class="input-group">
+            <label>Dirección</label>
+            <textarea id="direccion" rows="3" placeholder="Dirección del cliente"></textarea>
+          </div>
+
+          <div class="input-group">
+            <label>💵 Adelanto del Cliente</label>
+            <input type="number" id="adelanto" placeholder="Ej. 500">
+          </div>
+
+        </div>
+
+        <!-- SERVICIOS -->
+
+        <div>
+
+          <h2 class="section-title">🛠 Servicios</h2>
+
+          <div class="items" id="items">
+
+            <div class="item">
+              <input type="text" class="desc" placeholder="Servicio">
+              <input type="number" class="cantidad" placeholder="Cantidad">
+              <input type="number" class="precio" placeholder="Precio">
+            </div>
+
+          </div>
+
+          <button class="btn btn-add" onclick="agregarItem()">
+            ➕ Agregar Servicio
+          </button>
+
+          <button class="btn btn-generate" onclick="generarFactura()">
+            📄 Generar Factura
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- FACTURA -->
+
+    <div class="invoice" id="factura">
+
+      <div class="invoice-header">
+
+        <div>
+          <h2>FACTURA</h2>
+          <p id="fecha"></p>
+        </div>
+
+        <div style="text-align:right;">
+          <img src="Tl.jpg">
+          <p><strong>Teleco Repair</strong></p>
+          <p>444 372 7802</p>
+        </div>
+
+      </div>
+
+      <div>
+
+        <h3>Cliente:</h3>
+
+        <p id="facturaCliente"></p>
+        <p id="facturaTelefono"></p>
+        <p id="facturaCorreo"></p>
+        <p id="facturaDireccion"></p>
+
+      </div>
+
+      <table class="invoice-table">
+
+        <thead>
+          <tr>
+            <th>Servicio</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+
+        <tbody id="facturaItems"></tbody>
+
+      </table>
+
+      <div class="totals">
+
+        <p id="subtotalFinal">Subtotal: $0</p>
+
+        <p id="adelantoFinal">Adelanto: $0</p>
+
+        <p class="restante" id="restanteFinal">
+          Restante: $0
+        </p>
+
+      </div>
+
+      <button class="btn print-btn" onclick="window.print()">
+        🖨 Imprimir / Guardar PDF
+      </button>
+
+      <div class="footer">
+        Gracias por confiar en Teleco Repair 💙
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    function agregarItem(){
+
+      const container = document.getElementById('items');
+
+      const div = document.createElement('div');
+
+      div.classList.add('item');
+
+      div.innerHTML = `
+        <input type="text" class="desc" placeholder="Servicio">
+        <input type="number" class="cantidad" placeholder="Cantidad">
+        <input type="number" class="precio" placeholder="Precio">
+      `;
+
+      container.appendChild(div);
+
+    }
+
+    function generarFactura(){
+
+      const cliente = document.getElementById('cliente').value;
+      const telefono = document.getElementById('telefono').value;
+      const correo = document.getElementById('correo').value;
+      const direccion = document.getElementById('direccion').value;
+
+      const adelanto =
+        Number(document.getElementById('adelanto').value) || 0;
+
+      document.getElementById('facturaCliente').innerText = cliente;
+      document.getElementById('facturaTelefono').innerText = telefono;
+      document.getElementById('facturaCorreo').innerText = correo;
+      document.getElementById('facturaDireccion').innerText = direccion;
+
+      const fecha = new Date();
+
+      document.getElementById('fecha').innerText =
+        fecha.toLocaleDateString('es-MX');
+
+      const tbody = document.getElementById('facturaItems');
+
+      tbody.innerHTML = "";
+
+      let total = 0;
+
+      const descs = document.querySelectorAll('.desc');
+      const cantidades = document.querySelectorAll('.cantidad');
+      const precios = document.querySelectorAll('.precio');
+
+      for(let i = 0; i < descs.length; i++){
+
+        const desc = descs[i].value;
+        const cantidad = Number(cantidades[i].value);
+        const precio = Number(precios[i].value);
+
+        const subtotal = cantidad * precio;
+
+        total += subtotal;
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${desc}</td>
+            <td>${cantidad}</td>
+            <td>$${precio}</td>
+            <td>$${subtotal}</td>
+          </tr>
+        `;
+
+      }
+
+      const restante = total - adelanto;
+
+      document.getElementById('subtotalFinal').innerText =
+        "Subtotal: $" + total;
+
+      document.getElementById('adelantoFinal').innerText =
+        "Adelanto: $" + adelanto;
+
+      document.getElementById('restanteFinal').innerText =
+        "Restante: $" + restante;
+
+      document.getElementById('factura').style.display = "block";
+
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior:'smooth'
+      });
+
+    }
+
+  </script>
+
+</body>
+</html>
