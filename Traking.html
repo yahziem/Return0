@@ -7,95 +7,63 @@
     <link rel="icon" href="Tl.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Estilos base */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            color: white;
-            min-height: 100vh;
-            padding: 30px 15px;
+            font-family:'Poppins',sans-serif;
+            background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+            color:white;
+            min-height:100vh;
+            padding:30px 15px;
         }
-        .container { max-width: 1200px; margin: auto; }
-        .topbar { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
-        .logo { width: 90px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0, 212, 255, 0.25); }
+        .container { max-width:1200px; margin:auto; }
+        .topbar { display:flex; align-items:center; gap:15px; margin-bottom:30px; }
+        .logo { width:90px; border-radius:20px; box-shadow:0 10px 25px rgba(0,212,255,0.25); }
         .title h1 {
-            font-size: 32px;
-            background: linear-gradient(135deg, #00d4ff, #00f0ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size:32px;
+            background:linear-gradient(135deg,#00d4ff,#00f0ff);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
         }
-        .title p { color: #b8d4e3; font-size: 14px; margin-top: 5px; }
-
-        /* Tarjetas y Formulario */
         .card {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 25px;
-            padding: 30px;
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            margin-bottom: 30px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+            background:rgba(255,255,255,0.08);
+            border-radius:25px;
+            padding:30px;
+            backdrop-filter:blur(12px);
+            border:1px solid rgba(0,212,255,0.2);
+            margin-bottom:30px;
         }
-        .section-title { font-size: 22px; margin-bottom: 20px; color: #00d4ff; }
+        .section-title { font-size:22px; margin-bottom:20px; color:#00d4ff; }
         input, textarea, select {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            outline: none;
-            border-radius: 15px;
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
-            margin-bottom: 15px;
-            font-family: 'Poppins', sans-serif;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            width:100%; padding:15px; border:none; outline:none; border-radius:15px;
+            background:rgba(255,255,255,0.08); color:white; margin-bottom:15px;
+            font-family:'Poppins',sans-serif; border:1px solid rgba(255,255,255,0.08);
         }
         button {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 15px;
-            background: linear-gradient(135deg, #00d4ff, #0083b0);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
+            width:100%; padding:15px; border:none; border-radius:15px;
+            background:linear-gradient(135deg,#00d4ff,#0083b0);
+            color:white; font-weight:600; cursor:pointer; transition:0.3s;
         }
-        button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0, 212, 255, 0.25); }
-        
+        button:hover { transform:translateY(-2px); box-shadow:0 10px 20px rgba(0,212,255,0.25); }
         .btn-link {
-            display: inline-flex;
-            padding: 12px 22px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            color: white;
-            text-decoration: none;
-            background: rgba(255, 255, 255, 0.08);
+            display:inline-flex; align-items:center; padding:12px 22px;
+            border-radius:15px; border:1px solid rgba(255,255,255,0.18);
+            color:white; text-decoration:none; background:rgba(255,255,255,0.08);
         }
-
-        /* Estados */
-        .status {
-            display: inline-block;
-            padding: 10px 18px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-        .status.recibido { background: #20a850; }
-        .status.diagnostico { background: #f6b93b; }
-        .status.reparando { background: #ff6b6b; }
-        .status.listo { background: #54a0ff; }
-        .status.entregado { background: #778beb; }
-
         .device {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 20px;
-            margin-top: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background:rgba(255,255,255,0.05); border-radius:20px;
+            padding:20px; margin-top:20px; border:1px solid rgba(255,255,255,0.08);
         }
-        .footer { margin-top: 20px; text-align: center; color: #aaa; }
+        .status {
+            display:inline-block; padding:10px 18px; border-radius:30px;
+            font-size:14px; font-weight:600; margin: 10px 0; color:#fff;
+        }
+        .status.recibido { background:#20a850; }
+        .status.diagnostico { background:#f6b93b; }
+        .status.reparando { background:#ff6b6b; }
+        .status.listo { background:#54a0ff; }
+        .status.entregado { background:#778beb; }
+        .btn-ws { background: #25D366 !important; margin-bottom: 10px; }
+        .footer { margin-top:20px; text-align:center; color:#aaa; }
     </style>
 </head>
 <body>
@@ -107,14 +75,13 @@
             <h1>Teleco Repair</h1>
             <p>Panel de Administración</p>
         </div>
-        <!-- Cambia esto en tu código de Admin -->
-         <a href="consulta.html" class="btn-link">Ver seguimiento cliente</a>
+        <a href="consulta.html" class="btn-link">Ver seguimiento cliente</a>
     </div>
 
     <div class="card">
         <h2 class="section-title">📦 Registrar Equipo</h2>
         <input type="text" id="cliente" placeholder="Nombre del cliente">
-        <input type="text" id="telefono" placeholder="Teléfono">
+        <input type="text" id="telefono" placeholder="Teléfono (Ej: 521XXXXXXXXXX)">
         <input type="text" id="dispositivo" placeholder="Dispositivo">
         <textarea id="falla" rows="4" placeholder="Describe la falla"></textarea>
         <button onclick="registrarEquipo()">Registrar Equipo</button>
@@ -129,15 +96,10 @@
 </div>
 
 <script type="module">
-    // 1. IMPORTACIONES CORREGIDAS
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
     import { 
-        getFirestore, 
-        collection, 
-        addDoc, 
-        onSnapshot, 
-        doc, 
-        updateDoc 
+        getFirestore, collection, addDoc, onSnapshot, 
+        doc, updateDoc, deleteDoc, query, where, getDocs 
     } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -146,109 +108,117 @@
         projectId: "telecorepair",
         storageBucket: "telecorepair.firebasestorage.app",
         messagingSenderId: "849763961572",
-        appId: "1:849763961572:web:57cb37bfe8202b58ea3af1",
-        measurementId: "G-25SJYTD6X7"
+        appId: "1:849763961572:web:57cb37bfe8202b58ea3af1"
     };
 
-    // 2. INICIALIZACIÓN
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Funciones de utilidad
-    function generarFolio() {
-        return 'TR-' + Math.floor(Math.random() * 900000);
-    }
+    // --- 1. FUNCIÓN DE AUTO-ELIMINACIÓN (5 DÍAS) ---
+    async function limpiarEquiposAntiguos() {
+        const ahora = new Date();
+        const cincoDiasMilis = 5 * 24 * 60 * 60 * 1000;
+        const q = query(collection(db, "equipos"), where("estado", "==", "Entregado"));
+        const snapshot = await getDocs(q);
 
-    // 3. REGISTRAR EQUIPO (Disponible globalmente para el botón)
+        snapshot.forEach(async (docSnap) => {
+            const equipo = docSnap.data();
+            if (equipo.fechaEntrega) {
+                const fechaEntrega = new Date(equipo.fechaEntrega);
+                if (ahora - fechaEntrega > cincoDiasMilis) {
+                    await deleteDoc(doc(db, "equipos", docSnap.id));
+                }
+            }
+        });
+    }
+    limpiarEquiposAntiguos();
+
+    // --- 2. REGISTRAR EQUIPO ---
+    function generarFolio() { return 'TR-' + Math.floor(Math.random() * 900000); }
+
     window.registrarEquipo = async function() {
         const cliente = document.getElementById('cliente').value;
         const telefono = document.getElementById('telefono').value;
         const dispositivo = document.getElementById('dispositivo').value;
         const falla = document.getElementById('falla').value;
 
-        if (!cliente || !telefono || !dispositivo) {
-            alert('Completa todos los campos');
-            return;
-        }
+        if (!cliente || !telefono || !dispositivo) return alert('Completa los campos');
 
-        try {
-            await addDoc(collection(db, "equipos"), {
-                cliente,
-                telefono,
-                dispositivo,
-                falla,
-                folio: generarFolio(),
-                estado: 'Recibido',
-                actualizacion: 'Equipo recibido correctamente',
-                fecha: new Date().toLocaleDateString('es-MX')
-            });
+        await addDoc(collection(db, "equipos"), {
+            cliente, telefono, dispositivo, falla,
+            folio: generarFolio(),
+            estado: 'Recibido',
+            actualizacion: 'Equipo recibido correctamente',
+            fecha: new Date().toLocaleDateString('es-MX')
+        });
 
-            alert('✅ Equipo registrado');
-            // Limpiar campos
-            ['cliente', 'telefono', 'dispositivo', 'falla'].forEach(id => document.getElementById(id).value = '');
-        } catch (e) {
-            console.error("Error al añadir: ", e);
-        }
+        alert('✅ Equipo registrado');
+        ['cliente', 'telefono', 'dispositivo', 'falla'].forEach(id => document.getElementById(id).value = '');
     }
 
-    // 4. ESCUCHAR CAMBIOS EN TIEMPO REAL
-    const equiposDiv = document.getElementById('equipos');
+    // --- 3. COMPARTIR WHATSAPP ---
+    window.compartirWhatsApp = function(telefono, cliente, folio, estado) {
+        const numLimpio = telefono.replace(/\D/g, '');
+        const urlSeguimiento = `https://return.lat/consulta.html`;
+        const mensaje = `Hola *${cliente}*, te saludamos de *Teleco Repair*🛠.%0A%0A` +
+                        `Tu equipo está en sistema.%0A*Folio:* ${folio}%0A*Estado:* ${estado}%0A%0A` +
+                        `Consulta avances aquí:%0A${urlSeguimiento}`;
+        window.open(`https://wa.me/${numLimpio}?text=${mensaje}`, '_blank');
+    };
 
+    // --- 4. LISTADO EN TIEMPO REAL ---
     onSnapshot(collection(db, "equipos"), (snapshot) => {
+        const equiposDiv = document.getElementById('equipos');
         equiposDiv.innerHTML = '';
-        snapshot.forEach((docSnap) => {
-            const equipo = docSnap.data();
-            const id = docSnap.id;
 
-            // FIX: Expresión regular corregida para evitar el SyntaxError de la imagen
-            const estadoClass = equipo.estado 
-                ? equipo.estado.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "") 
-                : 'recibido';
+        snapshot.forEach((docSnap) => {
+            const eq = docSnap.data();
+            const id = docSnap.id;
+            const estadoClase = eq.estado.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
 
             equiposDiv.innerHTML += `
                 <div class="device">
-                    <h2>${equipo.cliente}</h2>
-                    <p>📱 <b>Dispositivo:</b> ${equipo.dispositivo}</p>
-                    <p>🔧 <b>Falla:</b> ${equipo.falla}</p>
-                    <p>📞 <b>Tel:</b> ${equipo.telefono}</p>
-                    <p>🧾 <b>Folio:</b> ${equipo.folio}</p>
-                    <p>📅 <b>Fecha:</b> ${equipo.fecha}</p>
+                    <h2>${eq.cliente}</h2>
+                    <p>📱 ${eq.dispositivo} | 🧾 ${eq.folio}</p>
+                    <div class="status ${estadoClase}">${eq.estado}</div>
                     
-                    <div class="status ${estadoClass}">${equipo.estado}</div>
-                    
-                    <p style="margin-top:10px;">📝 <b>Nota:</b> ${equipo.actualizacion || 'Sin actualizaciones'}</p>
+                    <button class="btn-ws" onclick="compartirWhatsApp('${eq.telefono}', '${eq.cliente}', '${eq.folio}', '${eq.estado}')">
+                        Enviar a WhatsApp
+                    </button>
 
-                    <select onchange="cambiarEstado('${id}', this.value)" style="margin-top:10px;">
-                        <option value="Recibido" ${equipo.estado === 'Recibido' ? 'selected' : ''}>Recibido</option>
-                        <option value="Diagnóstico" ${equipo.estado === 'Diagnóstico' ? 'selected' : ''}>Diagnóstico</option>
-                        <option value="Reparando" ${equipo.estado === 'Reparando' ? 'selected' : ''}>Reparando</option>
-                        <option value="Listo" ${equipo.estado === 'Listo' ? 'selected' : ''}>Listo</option>
-                        <option value="Entregado" ${equipo.estado === 'Entregado' ? 'selected' : ''}>Entregado</option>
+                    <select onchange="cambiarEstado('${id}', this.value)">
+                        <option value="Recibido" ${eq.estado==='Recibido'?'selected':''}>Recibido</option>
+                        <option value="Diagnóstico" ${eq.estado==='Diagnóstico'?'selected':''}>Diagnóstico</option>
+                        <option value="Reparando" ${eq.estado==='Reparando'?'selected':''}>Reparando</option>
+                        <option value="Listo" ${eq.estado==='Listo'?'selected':''}>Listo</option>
+                        <option value="Entregado" ${eq.estado==='Entregado'?'selected':''}>Entregado</option>
                     </select>
 
-                    <textarea id="update-${id}" placeholder="Nueva actualización para el cliente..."></textarea>
-                    <button onclick="actualizar('${id}')">Guardar Actualización</button>
+                    <textarea id="upd-${id}" placeholder="Actualización para el cliente..."></textarea>
+                    <button onclick="actualizar('${id}')">Guardar Nota</button>
+                    <button onclick="borrarManual('${id}')" style="background:red; margin-top:10px;">Eliminar Ahora</button>
                 </div>
             `;
         });
     });
 
-    // 5. FUNCIONES DE ACTUALIZACIÓN
     window.cambiarEstado = async function(id, estado) {
-        await updateDoc(doc(db, "equipos", id), { estado });
+        const data = { estado };
+        if (estado === "Entregado") data.fechaEntrega = new Date().toISOString();
+        await updateDoc(doc(db, "equipos", id), data);
     }
 
     window.actualizar = async function(id) {
-        const input = document.getElementById(`update-${id}`);
-        const actualizacion = input.value;
-
-        if(!actualizacion) return alert("Escribe un mensaje");
-
-        await updateDoc(doc(db, "equipos", id), { actualizacion });
-        alert('✅ Actualización guardada');
-        input.value = '';
+        const val = document.getElementById(`upd-${id}`).value;
+        await updateDoc(doc(db, "equipos", id), { actualizacion: val });
+        alert('Actualizado');
     }
 
+    window.borrarManual = async function(id) {
+        if(confirm("¿Seguro que quieres eliminar este registro?")) {
+            await deleteDoc(doc(db, "equipos", id));
+        }
+    }
 </script>
 </body>
 </html>
