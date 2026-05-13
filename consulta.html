@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Reparación | Teleco Repair</title>
+    <link rel="icon" href="Tl.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 25px;
+            padding: 40px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+        .logo { width: 80px; border-radius: 15px; margin-bottom: 15px; }
+        h1 { color: #00d4ff; font-size: 22px; margin-bottom: 20px; }
+        input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.2);
+            color: white;
+            font-size: 16px;
+            margin-bottom: 15px;
+            outline: none;
+            text-align: center;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #00d4ff, #0083b0);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover { transform: scale(1.02); }
+
+        #resultado {
+            margin-top: 30px;
+            display: none;
+            text-align: left;
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .dato { margin-bottom: 10px; font-size: 14px; }
+        .dato b { color: #00d4ff; display: block; font-size: 11px; text-transform: uppercase; }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+        /* Colores de estado dinámicos */
+        .recibido { background: #20a850; }
+        .diagnostico { background: #f6b93b; }
+        .reparando { background: #ff6b6b; }
+        .listo { background: #54a0ff; }
+        .entregado { background: #778beb; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img src="Tl.jpg" class="logo">
+    <h1>Seguimiento de Equipo</h1>
+    
+    <input type="text" id="folio" placeholder="Introduce tu Folio (ej: TR-123)">
+    <button onclick="consultar()">Consultar Estado</button>
+
+    <div id="resultado">
+        <div class="dato"><b>Cliente</b> <span id="r-cliente"></span></div>
+        <div class="dato"><b>Equipo</b> <span id="r-equipo"></span></div>
+        <div class="dato"><b>Estado</b> <span id="r-estado" class="status"></span></div>
+        <div class="dato"><b>Última Actualización</b> <span id="r-nota"></span></div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCpzG4sxVr6Zl1xp7eHhrkdF7Fvc3GZ2pU",
+        authDomain: "telecorepair.firebaseapp.com",
+        projectId: "telecorepair",
+        storageBucket: "telecorepair.firebasestorage.app",
+        messagingSenderId: "849763961572",
+        appId: "1:849763961572:web:57cb37bfe8202b58ea3af1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.consultar = async function() {
+        const folioInput = document.getElementById('folio').value.trim();
+        const resDiv = document.getElementById('resultado');
+
+        if(!folioInput) return alert("Escribe tu folio");
+
+        // Buscar en Firebase por el campo 'folio'
+        const q = query(collection(db, "equipos"), where("folio", "==", folioInput));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            alert("No se encontró ese folio. Revisa que esté bien escrito.");
+            resDiv.style.display = 'none';
+            return;
+        }
+
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            document.getElementById('r-cliente').innerText = data.cliente;
+            document.getElementById('r-equipo').innerText = data.dispositivo;
+            document.getElementById('r-nota').innerText = data.actualizacion || "Sin novedades aún";
+            
+            const estadoSpan = document.getElementById('r-estado');
+            estadoSpan.innerText = data.estado;
+            
+            // Aplicar color según estado
+            const claseColor = data.estado.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+            estadoSpan.className = 'status ' + claseColor;
+            
+            resDiv.style.display = 'block';
+        });
+    }
+</script>
+
+</body>
+</html>
