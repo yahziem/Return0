@@ -50,3 +50,25 @@ document.querySelectorAll(".card").forEach(card => {
         card.style.transform = "rotateX(0) rotateY(0)";
     });
 });
+
+
+const observer = new IntersectionObserver(entries=>{
+
+entries.forEach(entry=>{
+
+if(entry.isIntersecting){
+entry.target.classList.add('show');
+}
+
+});
+
+});
+
+document.querySelectorAll('.hidden').forEach(el=>{
+observer.observe(el);
+});
+
+function closeAd(){
+document.getElementById('floatingAd').style.display='none';
+}
+

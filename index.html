@@ -2,10 +2,11 @@
 <html lang="es">
 
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Return 0 & Associates</title>
+<title>Return 0 & Associates SAS</title>
 
 <meta name="description" content="Soluciones tecnológicas premium para empresas modernas.">
 
@@ -14,6 +15,7 @@
 <link rel="stylesheet" href="style.css">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
@@ -24,7 +26,7 @@
 
 <div class="logo-wrap">
 <img src="con.png" class="logo">
-<span>Return 0 <strong>& Associates</strong></span>
+<span>Return 0 <strong>& Associates SAS</strong></span>
 </div>
 
 <nav>
@@ -231,7 +233,7 @@ Descubre cómo optimizar tu operación tecnológica hoy mismo.
 Empezar ahora
 </a>
 
-<a href="https://wa.me/524443727802?text=Hola%20Return%200%2C%20me%20gustaría%20agendar%20una%20asesoría"
+<a href="https://wa.me/524443727802?text=Hola%20Return%200%20%26%20Associates%20SAS%2C%20me%20gustaría%20agendar%20una%20asesoría"
 class="btn whatsapp">
 WhatsApp Business
 </a>
@@ -269,8 +271,33 @@ Enviar solicitud
 
 </section>
 
+<!-- ANUNCIO FLOTANTE -->
+
+<div class="floating-ad" id="floatingAd">
+
+<div class="floating-content">
+
+<button class="close-ad" onclick="closeAd()">
+×
+</button>
+
+<h3>🚀 Ahora somos SAS</h3>
+
+<p>
+Return 0 & Associates evoluciona oficialmente a
+<strong>Sociedad por Acciones Simplificada (SAS)</strong>.
+</p>
+
+<a href="#contact" class="btn">
+Conocer más
+</a>
+
+</div>
+
+</div>
+
 <footer>
-© 2026 Return 0 & Associates
+© 2026 Return 0 & Associates SAS
 </footer>
 
 <script>
@@ -290,6 +317,10 @@ entry.target.classList.add('show');
 document.querySelectorAll('.hidden').forEach(el=>{
 observer.observe(el);
 });
+
+function closeAd(){
+document.getElementById('floatingAd').style.display='none';
+}
 
 </script>
 
