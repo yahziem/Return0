@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>HydroOS v3 Enterprise | SCADA & ERP Integrado</title>
+   
+    <!-- Dependencias -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif;
+            background-color: #0b0f19; color: #fff; overflow: hidden;
+        }
+       
+        #mapa { position: absolute; top: 0; bottom: 0; right: 0; left: 480px; background: #000;}
+        #sidebar {
+            position: absolute; top: 0; bottom: 0; left: 0; width: 480px;
+            background-color: #121826; padding: 25px; box-sizing: border-box;
+            display: flex; flex-direction: column; z-index: 1000;
+            border-right: 1px solid #1f2937; box-shadow: 5px 0 30px rgba(0,0,0,0.95);
+        }
+
+        .header { border-bottom: 1px solid #1f2937; padding-bottom: 10px; margin-bottom: 15px; }
+        h1 { font-size: 32px; color: #00e676; margin: 0; letter-spacing: 1px; text-shadow: 0 0 12px rgba(0,230,118,0.4); }
+        .live-indicator { color: #ff1744; font-weight: bold; font-size: 13px; animation: blink 1.5s infinite; margin-top:5px; text-transform: uppercase;}
+        #clock { font-size: 20px; color: #e5e7eb; font-weight: 600; font-variant-numeric: tabular-nums; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
+
+        /* Estadísticas Básicas */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-box { background: linear-gradient(145deg, #1f2937, #111827); padding: 12px; border-radius: 6px; border-left: 3px solid #4fc3f7; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);}
+        .stat-title { color: #9ca3af; font-size: 11px; text-transform: uppercase; font-weight: 600;}
+        .stat-value { font-size: 22px; font-weight: bold; color: #fff; }
+
+        /* KPIs ERP y Eficiencia */
+        .kpi-container { display: flex; gap: 10px; margin-bottom: 15px; }
+        .kpi-card { background: linear-gradient(145deg, #1a2234, #121826); padding: 12px; border-radius: 6px; flex: 1; border-bottom: 2px solid #2563eb; text-align: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);}
+        .kpi-val { font-size: 24px; font-weight: bold; color: #00e676; }
+        .kpi-label { font-size: 10px; text-transform: uppercase; color: #9ca3af; }
+       
+        /* Gráfico de Eficiencia de Bombas */
+        .eficiencia-container { background: #1a2234; padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #374151;}
+        .efi-header { display: flex; justify-content: space-between; font-size: 12px; color: #9ca3af; margin-bottom: 8px; font-weight: bold;}
+        .progress-bg { background: #0f172a; height: 12px; border-radius: 6px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);}
+        .progress-fill { background: linear-gradient(90deg, #00b0ff, #00e676); height: 100%; width: 95%; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Asistente IA */
+        #ai-assistant { background: linear-gradient(90deg, rgba(15,23,42,1) 0%, rgba(30,27,75,0.6) 100%); border-left: 4px solid #8b5cf6; padding: 14px; margin-bottom: 15px; border-radius: 0 6px 6px 0; }
+        .ai-title { color: #a78bfa; font-weight: bold; font-size: 13px; margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.5px;}
+        #ai-text { font-size: 13px; color: #e2e8f0; font-style: italic; line-height: 1.5; }
+
+        /* Contenedor de Alertas e Historial */
+        .log-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #374151; padding-bottom: 5px; margin-bottom: 10px; }
+        .log-header h3 { margin: 0; color: #d1d5db; text-transform: uppercase; font-size: 14px; letter-spacing: 1px;}
+        
+        .scrollable-section { flex-grow: 1; overflow-y: auto; padding-right: 8px; display: flex; flex-direction: column; gap: 15px; }
+        .scrollable-section::-webkit-scrollbar { width: 6px; }
+        .scrollable-section::-webkit-scrollbar-track { background: #0f172a; border-radius: 3px; }
+        .scrollable-section::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+        .scrollable-section::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        /* Alertas Individuales */
+        .alerta-box { background: rgba(31, 41, 55, 0.7); padding: 12px; margin-bottom: 10px; border-radius: 6px; font-size: 13px; line-height: 1.4; transition: all 0.3s; backdrop-filter: blur(4px); border: 1px solid transparent;}
+        .alerta-box:hover { background: rgba(55, 65, 81, 0.9); }
+        .alerta-box.fuga { border-left: 4px solid #ff1744; background: linear-gradient(90deg, rgba(255,23,68,0.15) 0%, rgba(31,41,55,0.6) 100%); border-color: rgba(255,23,68,0.2); }
+        .alerta-box.falla { border-left: 4px solid #ff9100; background: linear-gradient(90deg, rgba(255,145,0,0.15) 0%, rgba(31,41,55,0.6) 100%); border-color: rgba(255,145,0,0.2); }
+        .alerta-box.electrico { border-left: 4px solid #9c27b0; background: linear-gradient(90deg, rgba(156,39,176,0.15) 0%, rgba(31,41,55,0.6) 100%); border-color: rgba(156,39,176,0.2); }
+        .alerta-box.comms { border-left: 4px solid #00bcd4; background: linear-gradient(90deg, rgba(0,188,212,0.15) 0%, rgba(31,41,55,0.6) 100%); border-color: rgba(0,188,212,0.2); }
+        .alerta-box.reparando { border-left: 4px solid #ffea00; background: linear-gradient(90deg, rgba(255,234,0,0.1) 0%, rgba(31,41,55,0.6) 100%); border-color: rgba(255,234,0,0.2); }
+        .alerta-box.resuelto { border-left: 4px solid #00e676; opacity: 0.7; }
+        .alerta-box.historial { border-left: 4px solid #475569; background: rgba(15, 23, 42, 0.6); margin-bottom: 8px; border: 1px solid #1e293b;}
+
+        .alerta-time { color: #9ca3af; font-size: 11px; font-weight: bold; }
+        .alerta-title { font-weight: bold; margin-bottom: 4px; display: block; font-size: 14px;}
+        .alerta-desc { font-size: 12px; color: #cbd5e1; margin-bottom: 6px; display: block; }
+       
+        .btn-despachar { background: #2563eb; color: white; border: none; padding: 10px 12px; border-radius: 4px; font-family: 'Rajdhani'; font-weight: bold; cursor: pointer; font-size: 12px; margin-top: 8px; width: 100%; text-transform: uppercase; letter-spacing: 1px; transition: background 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.3);}
+        .btn-despachar:hover { background: #1d4ed8; transform: translateY(-1px);}
+        .btn-despachar:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(0,0,0,0.3);}
+        .btn-despachar:disabled { background: #475569; cursor: not-allowed; color: #94a3b8; transform: none; box-shadow: none;}
+
+        .sim-controls { margin-top: 15px; display: flex; gap: 10px; padding-top: 10px; border-top: 1px solid #1f2937;}
+        .btn-sim { background: #334155; color: white; border: 1px solid #475569; padding: 10px; border-radius: 4px; cursor: pointer; flex-grow: 1; font-family: 'Rajdhani'; font-weight: 600; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px;}
+        .btn-sim:hover { background: #475569; border-color: #64748b;}
+
+        /* Animaciones Mapa */
+        .node-normal { transition: all 0.3s; }
+        .node-main-hub { animation: pulseHub 3s infinite; }
+        @keyframes pulseHub { 0% { filter: drop-shadow(0 0 2px #4fc3f7); } 50% { filter: drop-shadow(0 0 10px #4fc3f7); } 100% { filter: drop-shadow(0 0 2px #4fc3f7); } }
+        
+        .node-fuga { stroke: #ff1744 !important; animation: pulseFuga 1.5s infinite; }
+        @keyframes pulseFuga { 0% { stroke-width: 2px; fill-opacity: 0.8; } 50% { stroke-width: 15px; fill-opacity: 0.2; stroke-opacity: 0.5;} 100% { stroke-width: 2px; fill-opacity: 0.8; } }
+        .node-falla { stroke: #ff9100 !important; animation: pulseFalla 1s infinite; }
+        @keyframes pulseFalla { 0% { stroke-width: 2px; } 50% { stroke-width: 20px; stroke-opacity: 0.4; } 100% { stroke-width: 2px; } }
+        .node-electrico { stroke: #9c27b0 !important; animation: pulseElectrico 2s infinite; }
+        @keyframes pulseElectrico { 0% { stroke-width: 2px; opacity: 1; } 50% { stroke-width: 10px; opacity: 0.4; fill: #000; } 100% { stroke-width: 2px; opacity: 1;} }
+        .node-comms { stroke: #00bcd4 !important; stroke-dasharray: 4; animation: spinComms 2s linear infinite; fill: transparent !important; stroke-width: 4px !important;}
+        @keyframes spinComms { 100% { stroke-dashoffset: 20; } }
+        .node-reparando { stroke: #ffea00 !important; animation: pulseReparando 2s infinite; }
+        @keyframes pulseReparando { 0% { fill: #ffea00; stroke-width: 2px; } 50% { fill: #fff; stroke-width: 8px; } 100% { fill: #ffea00; stroke-width: 2px; } }
+        
+        .node-clandestina{stroke:#ff00ff!important;fill:#ff00ff!important;animation:pulseClandestina 1s infinite;}
+        @keyframes pulseClandestina{0%{stroke-width:2px}50%{stroke-width:18px;opacity:.35}100%{stroke-width:2px}}
+       
+        .popup-custom .leaflet-popup-content-wrapper { background: #1f2937; color: #fff; border-radius: 4px; font-family: 'Rajdhani'; border: 1px solid #374151;}
+        .popup-custom .leaflet-popup-tip { background: #1f2937; }
+        .tooltip-pipe { background: rgba(15, 23, 42, 0.95); border: 1px solid #4fc3f7; color: white; font-family: 'Rajdhani'; font-size: 13px; border-radius: 4px; padding: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.8); backdrop-filter: blur(4px);}
+    </style>
+</head>
+<body>
+
+<div id="sidebar">
+    <div class="header">
+        <h1 style="font-size: 28px;">HydroOS <span style="color:white; font-size:18px; font-weight:500;">| SCADA</span></h1>
+        <!-- Inserción de la marca corporativa -->
+        <div style="color: #64748b; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 5px;">
+            <i class="fas fa-code"></i> Developed by Return 0 SAS
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+            <div class="live-indicator"><i class="fas fa-satellite-dish"></i> Telemetría Activa</div>
+            <div id="clock">00:00:00</div>
+        </div>
+    </div>
+        <!-- RED STATS BÁSICAS -->
+        <div class="stats-grid">
+            <div class="stat-box"><div class="stat-title">Flujo Red Total (Dinámico)</div><div class="stat-value" id="stat-flujo">0 L/s</div></div>
+            <div class="stat-box"><div class="stat-title">Unidades Campo</div><div class="stat-value" id="stat-cuadrillas">8/8</div></div>
+        </div>
+
+        <!-- KPIs AVANZADOS (IANC y Presión) -->
+        <div class="kpi-container">
+            <div class="kpi-card"><div class="kpi-val" id="kpi-ianc" style="color:#00e676;">5.0%</div><div class="kpi-label">IANC (Agua No Contabilizada)</div></div>
+            <div class="kpi-card"><div class="kpi-val" id="kpi-presion" style="color:#00e676;">85.0 PSI</div><div class="kpi-label">Presión Promedio Red</div></div>
+        </div>
+
+        <!-- GRÁFICO EFICIENCIA BOMBAS -->
+        <div class="eficiencia-container">
+            <div class="efi-header"><span>Rendimiento Red Estaciones de Bombeo</span><span id="efi-val">95%</span></div>
+            <div class="progress-bg"><div class="progress-fill" id="efi-bar"></div></div>
+        </div>
+
+        <!-- HYDROBRAIN IA -->
+        <div id="ai-assistant">
+            <span class="ai-title"><i class="fas fa-network-wired"></i> HydroBrain IA Core</span>
+            <div id="ai-text">Motor Físico Inicializado. Analizando presiones y caudales mediante modelo de continuidad.</div>
+        </div>
+
+        <!-- SECCIÓN DESLIZABLE PARA EVENTOS E HISTORIAL -->
+        <div class="scrollable-section">
+            
+            <!-- ALERTAS ACTIVAS -->
+            <div>
+                <div class="log-header"><h3><i class="fas fa-clipboard-list"></i> Despacho de Eventos</h3></div>
+                <div id="alert-container">
+                    <div style="color: #64748b; text-align: center; margin-top: 15px; font-style: italic; font-size: 13px;" id="msg-estable">
+                        <i class="fas fa-check-circle" style="color: #00e676;"></i> Monitoreando tuberías, sensores de presión y equipos...
+                    </div>
+                </div>
+            </div>
+
+            <!-- HISTORIAL CERRADOS -->
+            <div>
+                <div class="log-header" style="margin-top: 10px;"><h3><i class="fas fa-history"></i> Bitácora Histórica</h3></div>
+                <div id="historial-container">
+                    <div style="color: #64748b; text-align: center; margin-top: 15px; font-style: italic; font-size: 13px;" id="msg-historial">
+                        Los tickets de servicio cerrados se archivarán aquí.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sim-controls">
+            <button class="btn-sim" onclick="forzarIncidente()"><i class="fas fa-exclamation-triangle"></i> Inyectar Fallo en Red</button>
+        </div>
+    </div>
+   
+    <div id="mapa"></div>
+
+    <script>
+        // --- 1. RELOJ ---
+        function updateClock() {
+            document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-MX', { hour12: false }) + ' CST';
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        console.log("%c HydroOS v3 Enterprise %c Booting Hydraulic Physics Engine...", "background:#00e676;color:#000;font-weight:bold;padding:4px;", "color:#00e676;");
+
+        // --- 2. MAPA LEAFLET ---
+        const map = L.map("mapa", {
+            center: [32.505, -116.95],
+            zoom: 13,
+            zoomControl: false
+        });
+
+        L.control.zoom({ position: 'topright' }).addTo(map);
+
+        L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+            maxZoom: 19
+        }).addTo(map);
+
+        // --- 3. INFRAESTRUCTURA Y FÍSICA (GEMELO DIGITAL) ---
+        const nodosNombres = {
+            colonia: [
+                "Col. Libertad",
+                "Col. Buena Vista",
+                "Col. 20 de Noviembre",
+                "Col. El Rubí",
+                "Col. Francisco Villa",
+                "Col. Mariano Matamoros",
+                "Col. El Refugio",
+                "Col. Guaycura",
+                "Col. Capistrano",
+                "Col. El Lago",
+                "Playas",
+                "Santa Fe",
+                "La Presa",
+                "Otay Universidad"
+            ]
+        };
+
+        const nodos = [];
+        const tuberias = [];
+        const nodosMarkers = {};
+        const tuberiasPolylines = {};
+        var selectedPipe = null;
+
+        // Nodos Maestros (Hubs) con presiones reales (PSI)
+        const hubs = [
+            {
+                id: 's1',
+                name: 'Presa El Carrizo',
+                type: 'source',
+                lat: 32.460,
+                lng: -116.850,
+                basePressure: 110,
+                demand: 0
+            },
+            {
+                id: 's2',
+                name: 'Potabilizadora El Florido',
+                type: 'source',
+                lat: 32.460,
+                lng: -116.920,
+                basePressure: 115,
+                demand: 0
+            },
+            {
+                id: 'm1',
+                name: 'Tanque Otay',
+                type: 'main',
+                lat: 32.525,
+                lng: -116.940,
+                basePressure: 85,
+                demand: 0
+            },
+            {
+                id: 'm2',
+                name: 'Distribuidor Zona Río',
+                type: 'main',
+                lat: 32.520,
+                lng: -117.020,
+                basePressure: 80,
+                demand: 0
+            },
+            {
+                id: 'm3',
+                name: 'Tanque Cerro Colorado',
+                type: 'main',
+                lat: 32.495,
+                lng: -116.930,
+                basePressure: 90,
+                demand: 0
+            },
+            {
+                id: 'm4',
+                name: 'Tanque Sánchez Taboada',
+                type: 'main',
+                lat: 32.475,
+                lng: -116.980,
+                basePressure: 75,
+                demand: 0
+            },
+            {
+                id: 'm5',
+                name: 'Tanque Playas',
+                type: 'main',
+                lat: 32.510,
+                lng: -117.100,
+                basePressure: 70,
+                demand: 0
+            }
+        ];
+
+        hubs.forEach(h => {
+            h.status = 'ok';
+            h.elevacion = h.type === 'source' ? 145 : 80 + Math.random() * 55;
+            h.zonaTopografica = h.elevacion < 50 ? 'BAJA' : (h.elevacion < 150 ? 'MEDIA' : 'ALTA');
+            h.population = 0;
+            h.viviendas = 0;
+            h.consumoPromedio = 0;
+            h.demandaDiaria = 0;
+            h.demandaBase = 0;
+            h.demandaActual = 0;
+            h.consumoHorario = 1;
+            h.currentPressure = h.basePressure;
+            h.currentDemand = h.demand;
+            h.cargaHidraulica = h.elevacion + (h.basePressure * 0.70307);
+            h.estado = 'NORMAL';
+            h.tomaClandestina = false;
+            nodos.push(h);
+        });
+
+        const fuentesAbastecimiento = [
+            {
+                id: 'F-01',
+                nombre: 'Presa El Carrizo',
+                nodo: 's1',
+                capacidad: 4200,
+                nivelActual: 78,
+                caudalDisponible: 1250,
+                estado: 'NORMAL'
+            },
+            {
+                id: 'F-02',
+                nombre: 'Planta El Florido',
+                nodo: 's2',
+                capacidad: 3600,
+                nivelActual: 91,
+                caudalDisponible: 1100,
+                estado: 'NORMAL'
+            }
+        ];
+        const tanques = [
+            { id: 'TQ-01', nombre: 'Tanque Otay', nodo: 'm1', nivel: 74, entrada: 0, salida: 0, capacidad: 18000, estado: 'NORMAL' },
+            { id: 'TQ-02', nombre: 'Distribuidor Zona Río', nodo: 'm2', nivel: 68, entrada: 0, salida: 0, capacidad: 22000, estado: 'NORMAL' },
+            { id: 'TQ-03', nombre: 'Tanque Cerro Colorado', nodo: 'm3', nivel: 81, entrada: 0, salida: 0, capacidad: 16000, estado: 'NORMAL' },
+            { id: 'TQ-04', nombre: 'Tanque Sánchez Taboada', nodo: 'm4', nivel: 59, entrada: 0, salida: 0, capacidad: 14000, estado: 'NORMAL' },
+            { id: 'TQ-05', nombre: 'Tanque Playas', nodo: 'm5', nivel: 63, entrada: 0, salida: 0, capacidad: 12000, estado: 'NORMAL' }
+        ];
+
+        // Tuberías Principales
+        tuberias.push(
+            { id: 't1', from: 's1', to: 'm3', type: 'main' },
+            { id: 't2', from: 's2', to: 'm3', type: 'main' },
+            { id: 't3', from: 's2', to: 'm4', type: 'main' },
+            { id: 't4', from: 'm3', to: 'm1', type: 'main' },
+            { id: 't5', from: 'm3', to: 'm2', type: 'main' },
+            { id: 't6', from: 'm4', to: 'm2', type: 'main' },
+            { id: 't7', from: 'm2', to: 'm5', type: 'main' }
+        );
+
+        // Generación de Red Densa de Colonias
+        let pipeCounter = 8;
+
+        const materialesTuberia = [
+            { material: 'PVC', rugosidad: 0.0015, coeficienteHazenWilliams: 150 },
+            { material: 'Hierro dúctil', rugosidad: 0.26, coeficienteHazenWilliams: 130 },
+            { material: 'Acero', rugosidad: 0.045, coeficienteHazenWilliams: 140 }
+        ];
+
+        const dmaIdsCiudad = [
+            'DMA-01', 'DMA-02', 'DMA-03', 'DMA-04',
+            'DMA-05', 'DMA-06', 'DMA-07', 'DMA-08'
+        ];
+
+        hubs.filter(hub => hub.type === 'main').forEach((hub, hubIndex) => {
+            const branchCount = 5;
+            const numColonias = 20 + Math.floor(Math.random() * 5);
+
+            for (let i = 0; i < numColonias; i++) {
+                const branchIndex = i % branchCount;
+                const branchLevel = Math.floor(i / branchCount);
+                const branchAngle = (branchIndex / branchCount) * Math.PI * 2;
+                const angle = branchAngle + ((Math.random() - 0.5) * 0.16);
+                const desiredDist = 0.009 + (branchLevel * 0.006) + (Math.random() * 0.0025);
+                const latScale = Math.abs(Math.sin(angle));
+                const lngScale = Math.abs(Math.cos(angle)) * 1.2;
+                const maxLatDist = Math.min(32.532 - hub.lat, hub.lat - 32.445);
+                const maxLngDist = Math.min(hub.lng + 117.115, -116.84 - hub.lng);
+                const maxDist = Math.min(
+                    latScale ? maxLatDist / latScale : Infinity,
+                    lngScale ? maxLngDist / lngScale : Infinity
+                ) * 0.9;
+                const dist = Math.min(desiredDist, maxDist);
+                const lat = hub.lat + (Math.sin(angle) * dist);
+                const lng = hub.lng + (Math.cos(angle) * dist * 1.2);
+
+                const colId = `${hub.id}_c${i}`;
+                const colName = nodosNombres.colonia[
+                    Math.floor(Math.random() * nodosNombres.colonia.length)
+                ] + " Sec. " + (i + 1);
+
+                const habitantes = 1800 + Math.floor(Math.random() * 8200);
+                const viviendas = Math.max(1, Math.round(habitantes / (3.2 + Math.random() * 1.3)));
+                const consumoPromedio = 180 + Math.floor(Math.random() * 61);
+                const demandaDiaria = (habitantes * consumoPromedio) / 86400;
+
+                nodos.push({
+                    id: colId,
+                    name: colName,
+                    type: 'colonia',
+                    lat,
+                    lng,
+                    status: 'ok',
+                    parent: hub.id,
+                    dmaId: dmaIdsCiudad[(branchIndex + (hubIndex * 2)) % dmaIdsCiudad.length],
+                    elevacion: 25 + (branchLevel * 42) + Math.random() * 22,
+                    population: habitantes,
+                    viviendas,
+                    consumoPromedio,
+                    demandaDiaria,
+                    demandaBase: demandaDiaria,
+                    demandaActual: demandaDiaria,
+                    consumoHorario: 1,
+                    basePressure: 45 + Math.random() * 15,
+                    currentPressure: 0,
+                    demand: demandaDiaria,
+                    currentDemand: demandaDiaria,
+                    cargaHidraulica: 0,
+                    estado: 'NORMAL',
+                    tomaClandestina: false
+                });
+                nodos[nodos.length - 1].zonaTopografica = nodos[nodos.length - 1].elevacion < 50
+                    ? 'BAJA'
+                    : (nodos[nodos.length - 1].elevacion < 150 ? 'MEDIA' : 'ALTA');
+
+                if (branchLevel > 0) {
+                    tuberias.push({
+                        id: `t${pipeCounter++}`,
+                        from: `${hub.id}_c${i - branchCount}`,
+                        to: colId,
+                        type: 'minor',
+                        branch: true
+                    });
+                } else {
+                    tuberias.push({
+                        id: `t${pipeCounter++}`,
+                        from: hub.id,
+                        to: colId,
+                        type: 'minor',
+                        branch: true
+                    });
+                }
+            }
+        });
+
+        // --- CÁLCULO FÍSICO Y RENDERIZADO DE TUBERÍAS ---
+        tuberias.forEach(tub => {
+            const fromNode = nodos.find(node => node.id === tub.from);
+            const toNode = nodos.find(node => node.id === tub.to);
+
+            if (!fromNode || !toNode) {
+                return;
+            }
+
+            const isMain = tub.type === 'main';
+
+            const material = materialesTuberia[
+                Math.floor(Math.random() * materialesTuberia.length)
+            ];
+            const latDistance = (toNode.lat - fromNode.lat) * 111320;
+            const lngDistance = (toNode.lng - fromNode.lng) * 111320 * Math.cos(fromNode.lat * Math.PI / 180);
+            const longitud = Math.max(120, Math.sqrt(
+                Math.pow(latDistance, 2) + Math.pow(lngDistance, 2)
+            ));
+
+            tub.diametro = isMain
+                ? [24, 36, 48][Math.floor(Math.random() * 3)]
+                : [6, 8, 10, 12][Math.floor(Math.random() * 4)];
+            tub.nodoInicio = tub.from;
+            tub.nodoFin = tub.to;
+            tub.longitud = longitud;
+            tub.material = material.material;
+            tub.rugosidad = material.rugosidad;
+            tub.coeficienteHazenWilliams = material.coeficienteHazenWilliams;
+            tub.elevacion = (fromNode.elevacion + toNode.elevacion) / 2;
+            tub.antiguedad = 5 + Math.floor(Math.random() * 36);
+            tub.estadoValvula = 'ABIERTA';
+            tub.flujo = 0;
+            tub.velocidad = 0;
+            tub.perdidaCarga = 0;
+            tub.fuga = null;
+
+            const diametroMetros = tub.diametro * 0.0254;
+            const areaTransversal = Math.PI * Math.pow(diametroMetros / 2, 2);
+
+            tub.capacidadMaxLps = areaTransversal * 2.5 * 1000;
+            tub.capacidadMax = tub.capacidadMaxLps;
+            tub.flujoActual = 0;
+
+            const coords = [
+                [fromNode.lat, fromNode.lng],
+                [toNode.lat, toNode.lng]
+            ];
+
+            const normalStyle = {
+                color: isMain ? '#4fc3f7' : '#1e3a8a',
+                weight: isMain ? 4 : 2.5,
+                opacity: isMain ? 0.9 : 0.82,
+                dashArray: isMain ? null : '7, 5'
+            };
+
+            const polyline = L.polyline(coords, normalStyle).addTo(map);
+
+            const clickLine = L.polyline(coords, {
+                color: '#ffffff',
+                weight: 36,
+                opacity: 0,
+                interactive: true
+            }).addTo(map);
+
+            const pipeState = {
+                hovered: false,
+                overloaded: false
+            };
+
+            const getPipeStyle = () => {
+                if (selectedPipe === tub) {
+                    return {
+                        color: '#ffea00',
+                        weight: isMain ? 9 : 8,
+                        opacity: 1
+                    };
+                }
+
+                if (pipeState.hovered) {
+                    return {
+                        color: '#00ff88',
+                        weight: isMain ? 7 : 6,
+                        opacity: 1
+                    };
+                }
+
+                return {
+                    color: pipeState.overloaded ? '#ff9100' : normalStyle.color,
+                    weight: pipeState.overloaded
+                        ? (isMain ? 4 : 2.5)
+                        : normalStyle.weight,
+                    opacity: normalStyle.opacity,
+                    dashArray: pipeState.overloaded
+                        ? '8, 8'
+                        : normalStyle.dashArray
+                };
+            };
+
+            const applyPipeStyle = () => {
+                polyline.setStyle(getPipeStyle());
+            };
+
+            const getPipeInfo = () => {
+                const porcentajeCarga =
+                    (tub.flujoActual / tub.capacidadMaxLps) * 100;
+
+                return `<b>Tramo:</b> ${fromNode.name} ➔ ${toNode.name}<br>
+                 <b>Diámetro Físico:</b> ${tub.diametro}"<br>
+                 <b>Capacidad Máx:</b> ${tub.capacidadMaxLps.toFixed(1)} L/s<br>
+                 <b>Flujo Dinámico:</b> ${tub.flujoActual.toFixed(1)} L/s<br>
+                 <b style="color:${pipeState.overloaded ? '#ff9100' : '#00e676'}">
+                    Carga Hidráulica: ${porcentajeCarga.toFixed(1)}%
+                    ${pipeState.overloaded ? '(SOBRECARGA)' : ''}
+                 </b>`;
+            };
+
+            const selectPipe = event => {
+                if (selectedPipe && selectedPipe !== tub) {
+                    selectedPipe.pipeState.hovered = false;
+                    selectedPipe.polyline.closePopup();
+                    selectedPipe.applyPipeStyle();
+                }
+
+                selectedPipe = tub;
+                pipeState.hovered = false;
+
+                polyline.bringToFront();
+                polyline.setPopupContent(getPipeInfo());
+                polyline.openPopup(event && event.latlng);
+
+                applyPipeStyle();
+            };
+
+            const setHover = isHovered => {
+                pipeState.hovered = isHovered;
+
+                if (isHovered) {
+                    polyline.bringToFront();
+                }
+
+                applyPipeStyle();
+            };
+
+            tub.polyline = polyline;
+            tub.clickLine = clickLine;
+            tub.pipeState = pipeState;
+            tub.applyPipeStyle = applyPipeStyle;
+
+            tuberiasPolylines[tub.id] = polyline;
+
+            polyline._path.style.transition =
+                'stroke 180ms ease, stroke-width 180ms ease, stroke-opacity 180ms ease';
+
+            clickLine._path.style.transition =
+                'stroke-width 180ms ease';
+
+            polyline.bindPopup('', {
+                className: 'popup-custom',
+                autoClose: false,
+                closeOnClick: false,
+                keepInView: true,
+                autoPan: true,
+                closeButton: true,
+                closeOnEscapeKey: false
+            });
+
+            polyline.setPopupContent(getPipeInfo());
+
+            polyline.on('mouseover', () => setHover(true));
+            polyline.on('mouseout', () => setHover(false));
+            polyline.on('click', selectPipe);
+
+            clickLine.on('mouseover', event => {
+                polyline.fire('mouseover', event);
+            });
+
+            clickLine.on('mouseout', event => {
+                polyline.fire('mouseout', event);
+            });
+
+            clickLine.on('click', event => {
+                polyline.fire('click', event);
+            });
+        });
+
+        // Renderizar Nodos
+        nodos.forEach(nodo => {
+            nodo.currentPressure = nodo.basePressure;
+
+            const isSource = nodo.type === 'source';
+            const isMain = nodo.type === 'main';
+
+            const color = isSource
+                ? '#00e676'
+                : (isMain ? '#0ea5e9' : '#475569');
+
+            const cssClass = isMain || isSource
+                ? 'node-normal node-main-hub'
+                : 'node-normal';
+
+            const marker = L.circleMarker(
+                [nodo.lat, nodo.lng],
+                {
+                    radius: isSource ? 8 : (isMain ? 6 : 3.5),
+                    color,
+                    fillColor: color,
+                    fillOpacity: isMain || isSource ? 0.9 : 0.7,
+                    weight: isSource || isMain ? 2 : 1,
+                    className: cssClass
+                }
+            ).addTo(map);
+
+            marker.bindPopup(
+                `<b>${nodo.name}</b><br>
+                 <span style="font-size:11px; color:#aaa;">
+                    ID: ${nodo.id.toUpperCase()}
+                 </span><br>
+                 <span id="popup-pres-${nodo.id}"
+                       style="color:#00e676; font-weight:bold;">
+                    Presión: ${nodo.currentPressure.toFixed(1)} PSI
+                 </span>`,
+                {
+                    className: 'popup-custom'
+                }
+            );
+
+            nodosMarkers[nodo.id] = marker;
+        });
+
+        // --- 5. SISTEMA ERP, IA, EVENTOS E HISTORIAL ---
+        let alertasActivas = 0;
+        let cuadrillasDisponibles = 8;
+        let systemIdCounter = 1;
+        let folioCounter = 152;
+        let historialEventos = [];
+
+        let IANC = 5.0;
+        let eficienciaBombeo = 95;
+
+        let detectorEnCurso = false;
+        let detectorNodo = null;
+        let detectorConfianza = 0;
+        let detectorPerdida = 0;
+
+        const catalogoIncidentes = {
+            source: [
+                {
+                    tipo: 'FALLA MOTOR BOMBEO',
+                    desc: 'Vibración excesiva. Caída de presión en matriz.',
+                    clase: 'falla',
+                    css: 'node-falla',
+                    icono: '⚙️',
+                    accion: 'Despachar Electromecánica',
+                    iconBtn: 'fa-cogs',
+                },
+                {
+                    tipo: 'CORTE DE ENERGÍA',
+                    desc: 'Caída de tensión. Motores en paro.',
+                    clase: 'electrico',
+                    css: 'node-electrico',
+                    icono: '⚡',
+                    accion: 'Coordinar CFE',
+                    iconBtn: 'fa-bolt',
+                }
+            ],
+            main: [
+                {
+                    tipo: 'RUPTURA LÍNEA MAESTRA',
+                    desc: 'Despresurización masiva. Fuga crítica.',
+                    clase: 'fuga',
+                    css: 'node-fuga',
+                    icono: '🌊',
+                    accion: 'Despachar Maquinaria',
+                    iconBtn: 'fa-truck-monster',
+                }
+            ],
+            colonia: [
+                {
+                    tipo: 'FUGA TOMA DOMICILIARIA',
+                    desc: 'Brote de agua detectado en pavimento.',
+                    clase: 'fuga',
+                    css: 'node-fuga',
+                    icono: '💧',
+                    accion: 'Asignar Cuadrilla',
+                    iconBtn: 'fa-tools',
+                },
+                {
+                    tipo: 'VÁLVULA ATASCADA',
+                    desc: 'Anomalía de flujo en el sector DMA.',
+                    clase: 'falla',
+                    css: 'node-falla',
+                    icono: '🔧',
+                    accion: 'Revisión de Válvulas',
+                    iconBtn: 'fa-wrench',
+                }
+            ]
+        };
+
+        // --- 6. GEMELO DIGITAL HIDRÁULICO ---
+        const GRAVEDAD = 9.80665;
+        const DENSIDAD_AGUA = 998;
+        const PRESION_POR_METRO = 1 / 0.70307;
+        const patronesHorarios = [
+            { inicio: 0, fin: 5, factor: 0.20 },
+            { inicio: 6, fin: 9, factor: 1.00 },
+            { inicio: 10, fin: 17, factor: 0.70 },
+            { inicio: 18, fin: 22, factor: 1.20 },
+            { inicio: 23, fin: 23, factor: 0.40 }
+        ];
+        const dmas = [];
+        const sensoresScada = [];
+        const bombas = [
+            {
+                id: 'B-101',
+                rpm: 1780,
+                potenciaKW: 420,
+                caudal: 0,
+                presionSalida: 0,
+                eficiencia: 0.84,
+                temperaturaMotor: 58,
+                vibracion: 1.2,
+                estado: 'NORMAL'
+            },
+            {
+                id: 'B-102',
+                rpm: 1760,
+                potenciaKW: 360,
+                caudal: 0,
+                presionSalida: 0,
+                eficiencia: 0.87,
+                temperaturaMotor: 55,
+                vibracion: 1.0,
+                estado: 'NORMAL'
+            }
+        ];
+        const incidentesOperativos = [];
+        const indicadoresERP = {
+            mttr: 0,
+            fugasMes: 0,
+            aguaRecuperada: 0,
+            poblacionAbastecida: 0,
+            caudalProducido: 0,
+            caudalDistribuido: 0,
+            presionPromedio: 0,
+            presionMinima: 0,
+            presionMaxima: 0,
+            fugasActivas: 0,
+            sectoresAfectados: 0,
+            disponibilidadInfraestructura: 100,
+            eficienciaBombeo: 0
+        };
+
+        const epanetAdapter = {
+            parse(texto) {
+                const secciones = {};
+                let seccionActual = null;
+                texto.split(/\r?\n/).forEach(linea => {
+                    const limpia = linea.trim();
+                    if (!limpia || limpia.startsWith(';')) return;
+                    const encabezado = limpia.match(/^\[([^\]]+)\]$/);
+                    if (encabezado) {
+                        seccionActual = encabezado[1].toUpperCase();
+                        secciones[seccionActual] = [];
+                        return;
+                    }
+                    if (seccionActual) secciones[seccionActual].push(limpia.split(/\s+/));
+                });
+                return {
+                    nodos: secciones.JUNCTIONS || [],
+                    tuberias: secciones.PIPES || [],
+                    reservorios: secciones.RESERVOIRS || [],
+                    bombas: secciones.PUMPS || [],
+                    valvulas: secciones.VALVES || [],
+                    opciones: secciones.OPTIONS || []
+                };
+            }
+        };
+
+        window.HydroOS = window.HydroOS || {};
+        window.HydroOS.epanetAdapter = epanetAdapter;
+        window.HydroOS.getState = () => ({
+            nodos,
+            tuberias,
+            dmas,
+            fuentes: fuentesAbastecimiento,
+            tanques,
+            sensores: sensoresScada,
+            bombas,
+            indicadores: indicadoresERP
+        });
+
+        function actualizarIndicadoresERP() {
+            const cerrados = incidentesOperativos.filter(item => item.estado === 'CIERRE');
+            indicadoresERP.mttr = cerrados.length
+                ? cerrados.reduce((total, item) => total + item.mttr, 0) / cerrados.length
+                : 0;
+            indicadoresERP.fugasMes = incidentesOperativos.filter(item =>
+                item.tipo.includes('FUGA') || item.tipo.includes('RUPTURA')
+            ).length;
+
+            const nodosConServicio = nodos.filter(nodo =>
+                nodo.type === 'colonia' && nodo.currentPressure >= 15
+            );
+            const presiones = nodos
+                .filter(nodo => nodo.type === 'colonia')
+                .map(nodo => nodo.currentPressure || 0);
+            indicadoresERP.poblacionAbastecida = nodosConServicio.reduce(
+                (total, nodo) => total + (nodo.population || 0),
+                0
+            );
+            indicadoresERP.caudalProducido = fuentesAbastecimiento.reduce(
+                (total, fuente) => total + (fuente.caudalActual || 0),
+                0
+            );
+            indicadoresERP.caudalDistribuido = nodos.reduce(
+                (total, nodo) => total + (nodo.demandaActual || 0),
+                0
+            );
+            indicadoresERP.presionPromedio = presiones.length
+                ? presiones.reduce((total, presion) => total + presion, 0) / presiones.length
+                : 0;
+            indicadoresERP.presionMinima = presiones.length ? Math.min(...presiones) : 0;
+            indicadoresERP.presionMaxima = presiones.length ? Math.max(...presiones) : 0;
+            indicadoresERP.fugasActivas = tuberias.filter(tuberia => tuberia.fuga).length +
+                nodos.filter(nodo => nodo.fugaDomiciliaria).length;
+            indicadoresERP.sectoresAfectados = dmas.filter(dma => dma.estado !== 'NORMAL').length;
+            indicadoresERP.disponibilidadInfraestructura = tuberias.length
+                ? ((tuberias.filter(tuberia => tuberia.estadoValvula === 'ABIERTA').length / tuberias.length) * 100)
+                : 100;
+            indicadoresERP.eficienciaBombeo = eficienciaBombeo;
+        }
+
+        function obtenerFactorHorario() {
+            const hora = new Date().getHours();
+            const patron = patronesHorarios.find(item => hora >= item.inicio && hora <= item.fin);
+            return patron ? patron.factor : 0.40;
+        }
+
+        function obtenerEstadoScada(valor, limites) {
+            if (valor >= limites.critico) return 'CRÍTICO';
+            if (valor >= limites.alarma) return 'ALARMA';
+            if (valor >= limites.advertencia) return 'ADVERTENCIA';
+            return 'NORMAL';
+        }
+
+        function actualizarDemandaHoraria() {
+            const factorHorario = obtenerFactorHorario();
+
+            nodos.forEach(nodo => {
+                if (nodo.type === 'source') {
+                    nodo.demandaActual = 0;
+                    nodo.currentDemand = 0;
+                    nodo.consumoHorario = factorHorario;
+                    return;
+                }
+
+                const demandaBase = nodo.demandaBase || nodo.demand || 0;
+                nodo.consumoHorario = factorHorario;
+                nodo.demandaActual = demandaBase * factorHorario;
+
+                if (nodo.tomaClandestina && nodo.consumoNoRegistrado) {
+                    nodo.demandaActual += nodo.consumoNoRegistrado;
+                }
+
+                if (nodo.fugaDomiciliaria) {
+                    nodo.demandaActual += nodo.fugaDomiciliaria.caudal;
+                }
+
+                nodo.currentDemand = nodo.demandaActual;
+                nodo.demand = demandaBase;
+            });
+        }
+
+        function calcularCaudalFuga(fuga, presionPsi) {
+            const cargaDisponible = Math.max(0, presionPsi * 0.70307);
+            const area = Math.max(0.00001, fuga.areaInicial * fuga.factorEvolucion);
+            const coeficienteDescarga = fuga.coeficienteDescarga || 0.62;
+            const caudalM3s = coeficienteDescarga * area * Math.sqrt(2 * GRAVEDAD * cargaDisponible);
+            return Math.max(fuga.caudalMinimo || 0, caudalM3s * 1000);
+        }
+
+        function actualizarFugas() {
+            const ahora = Date.now();
+
+            tuberias.forEach(tub => {
+                if (!tub.fuga) return;
+                const minutos = (ahora - tub.fuga.inicio) / 60000;
+                tub.fuga.factorEvolucion = minutos < 5 ? 1 : (minutos < 15 ? 2 : 4);
+                const nodo = nodos.find(item => item.id === tub.nodoFin);
+                const presion = nodo ? nodo.currentPressure : 0;
+                tub.fuga.caudal = calcularCaudalFuga(tub.fuga, presion);
+            });
+
+            nodos.forEach(nodo => {
+                if (!nodo.fugaDomiciliaria) return;
+                const fuga = nodo.fugaDomiciliaria;
+                const minutos = (ahora - fuga.inicio) / 60000;
+                fuga.factorEvolucion = minutos < 5 ? 1 : (minutos < 15 ? 2 : 4);
+                fuga.caudal = calcularCaudalFuga(fuga, nodo.currentPressure);
+            });
+        }
+
+        function crearFugaDinamica(nodo, incidente) {
+            const tuberia = tuberias.find(tub =>
+                tub.nodoFin === nodo.id || tub.nodoInicio === nodo.id
+            );
+            const tipoFuga = incidente.tipo.includes('RUPTURA')
+                ? 'Ruptura total'
+                : (incidente.tipo.includes('DOMICILIARIA') ? 'Fuga media' : 'Fuga crítica');
+            const areaInicial = tipoFuga === 'Ruptura total'
+                ? 0.012
+                : (tipoFuga === 'Fuga crítica' ? 0.004 : 0.00035);
+            const fuga = {
+                tipo: tipoFuga,
+                inicio: Date.now(),
+                areaInicial,
+                factorEvolucion: 1,
+                coeficienteDescarga: 0.62,
+                caudalMinimo: tipoFuga === 'Fuga media' ? 5 : 0,
+                caudal: 0,
+                material: tuberia ? tuberia.material : 'PVC',
+                antiguedad: 8 + Math.floor(Math.random() * 28)
+            };
+
+            if (tuberia) {
+                tuberia.fuga = fuga;
+            } else {
+                nodo.fugaDomiciliaria = fuga;
+            }
+            return fuga;
+        }
+
+        function calcularPerdidaCarga(tub) {
+            const diametroMetros = tub.diametro * 0.0254;
+            const caudalM3s = Math.abs(tub.flujo) / 1000;
+            if (!caudalM3s || !diametroMetros) return 0;
+
+            const perdidaHazen = 10.67 * tub.longitud * Math.pow(caudalM3s, 1.852) /
+                (Math.pow(tub.coeficienteHazenWilliams, 1.852) * Math.pow(diametroMetros, 4.87));
+            const velocidad = caudalM3s / (Math.PI * Math.pow(diametroMetros / 2, 2));
+            const reynolds = Math.max(1, velocidad * diametroMetros / 0.000001004);
+            const factorDarcy = 0.25 / Math.pow(
+                Math.log10((tub.rugosidad / (3.7 * diametroMetros)) + (5.74 / Math.pow(reynolds, 0.9))),
+                2
+            );
+            const perdidaDarcy = factorDarcy * (tub.longitud / diametroMetros) *
+                (Math.pow(velocidad, 2) / (2 * GRAVEDAD));
+
+            tub.velocidad = velocidad;
+            tub.perdidaCarga = (perdidaHazen * 0.6) + (perdidaDarcy * 0.4);
+            return tub.perdidaCarga;
+        }
+
+        function resolverRedHidraulica() {
+            const demandaPorNodo = {};
+            nodos.forEach(nodo => {
+                demandaPorNodo[nodo.id] = Math.max(0, nodo.demandaActual || 0);
+                nodo.cargaHidraulica = nodo.type === 'source'
+                    ? nodo.elevacion + (nodo.basePressure * 0.70307)
+                    : nodo.cargaHidraulica || nodo.elevacion + (nodo.basePressure * 0.70307);
+            });
+
+            tuberias.forEach(tub => {
+                tub.flujo = demandaPorNodo[tub.nodoFin] || 0;
+            });
+
+            for (let iteracion = 0; iteracion < 8; iteracion++) {
+                const flujoAcumulado = { ...demandaPorNodo };
+                tuberias.slice().reverse().forEach(tub => {
+                    const fuga = tub.fuga ? tub.fuga.caudal : 0;
+                    tub.flujo = Math.max(0, (flujoAcumulado[tub.nodoFin] || 0) + fuga);
+                    flujoAcumulado[tub.nodoInicio] =
+                        (flujoAcumulado[tub.nodoInicio] || 0) + tub.flujo;
+                });
+            }
+
+            for (let pasada = 0; pasada < 6; pasada++) {
+                nodos.forEach(nodo => {
+                    if (nodo.type === 'source') {
+                        nodo.cargaHidraulica = nodo.elevacion + (nodo.basePressure * 0.70307);
+                        return;
+                    }
+
+                    const entradas = tuberias.filter(tub => tub.nodoFin === nodo.id);
+                    const cargas = entradas.map(tub => {
+                        const origen = nodos.find(item => item.id === tub.nodoInicio);
+                        const cargaOrigen = origen ? origen.cargaHidraulica : 0;
+                        return cargaOrigen - calcularPerdidaCarga(tub);
+                    }).filter(carga => Number.isFinite(carga) && carga > nodo.elevacion);
+
+                    if (cargas.length) {
+                        nodo.cargaHidraulica = Math.max(nodo.elevacion + 2, Math.min(...cargas));
+                    }
+                    nodo.currentPressure = Math.max(0, (nodo.cargaHidraulica - nodo.elevacion) * PRESION_POR_METRO);
+                    nodo.presion = nodo.currentPressure;
+                    nodo.estado = obtenerEstadoScada(80 - nodo.currentPressure, {
+                        advertencia: 10,
+                        alarma: 25,
+                        critico: 40
+                    });
+                });
+            }
+
+            tuberias.forEach(tub => {
+                const porcentajeCarga = tub.capacidadMaxLps
+                    ? (tub.flujo / tub.capacidadMaxLps) * 100
+                    : 0;
+                tub.flujoActual = tub.flujo;
+                tub.pipeState.overloaded = porcentajeCarga > 85;
+                tub.applyPipeStyle();
+            });
+        }
+
+        function inicializarDMAs() {
+            const configuracionDMA = [
+                { id: 'DMA-01', nombre: 'Centro', entrada: 'm3' },
+                { id: 'DMA-02', nombre: 'Zona Río', entrada: 'm2' },
+                { id: 'DMA-03', nombre: 'Otay', entrada: 'm1' },
+                { id: 'DMA-04', nombre: 'Playas', entrada: 'm5' },
+                { id: 'DMA-05', nombre: 'Cerro Colorado', entrada: 'm3' },
+                { id: 'DMA-06', nombre: 'La Presa', entrada: 'm1' },
+                { id: 'DMA-07', nombre: 'Sánchez Taboada', entrada: 'm4' },
+                { id: 'DMA-08', nombre: 'Mariano Matamoros', entrada: 'm2' }
+            ];
+
+            configuracionDMA.forEach(configuracion => {
+                const zona = nodos.find(nodo => nodo.id === configuracion.entrada);
+                dmas.push({
+                    id: configuracion.id,
+                    nombre: configuracion.nombre,
+                    entrada: configuracion.entrada,
+                    salida: null,
+                    poblacion: 0,
+                    usuarios: 0,
+                    demandaBase: 0,
+                    demandaActual: 0,
+                    presionPromedio: 0,
+                    caudalEntrada: 0,
+                    caudalSalida: 0,
+                    consumoEsperado: 0,
+                    consumoMedido: 0,
+                    diferencia: 0,
+                    estadoOperativo: 'NORMAL',
+                    estado: 'NORMAL',
+                    probabilidadFuga: 0
+                });
+            });
+        }
+
+        function actualizarDMAs() {
+            dmas.forEach(dma => {
+                const zona = nodos.find(nodo => nodo.id === dma.entrada);
+                const colonias = nodos.filter(nodo => nodo.dmaId === dma.id);
+                dma.poblacion = colonias.reduce((total, nodo) => total + (nodo.population || 0), 0);
+                dma.usuarios = colonias.reduce((total, nodo) => total + (nodo.viviendas || 0), 0);
+                dma.demandaBase = colonias.reduce((total, nodo) => total + (nodo.demandaBase || 0), 0);
+                dma.demandaActual = colonias.reduce((total, nodo) => total + (nodo.demandaActual || 0), 0);
+                dma.presionPromedio = colonias.length
+                    ? colonias.reduce((total, nodo) => total + (nodo.currentPressure || 0), 0) / colonias.length
+                    : 0;
+                dma.consumoEsperado = colonias.reduce((total, nodo) => total + (nodo.demandaActual || 0), 0);
+                const tuberiasLocales = tuberias.filter(tub => {
+                    const nodoOrigen = nodos.find(nodo => nodo.id === tub.nodoInicio);
+                    const nodoDestino = nodos.find(nodo => nodo.id === tub.nodoFin);
+                    return nodoDestino &&
+                        nodoDestino.dmaId === dma.id &&
+                        (!nodoOrigen || nodoOrigen.dmaId !== dma.id);
+                });
+                const tuberiasSalida = tuberias.filter(tub => {
+                    const nodoOrigen = nodos.find(nodo => nodo.id === tub.nodoInicio);
+                    const nodoDestino = nodos.find(nodo => nodo.id === tub.nodoFin);
+                    return nodoOrigen &&
+                        nodoOrigen.dmaId === dma.id &&
+                        (!nodoDestino || nodoDestino.dmaId !== dma.id);
+                });
+                const caudalEntradaGlobal = tuberiasLocales.reduce(
+                    (total, tub) => total + Math.max(0, tub.flujo),
+                    0
+                );
+                const caudalSalidaGlobal = tuberiasSalida.reduce(
+                    (total, tub) => total + Math.max(0, tub.flujo),
+                    0
+                );
+                const caudalEntrada = caudalEntradaGlobal;
+                const caudalSalida = caudalSalidaGlobal;
+                dma.consumoMedido = Math.max(0, caudalEntrada - caudalSalida);
+                dma.caudalEntrada = caudalEntrada;
+                dma.caudalSalida = caudalSalida;
+                dma.diferencia = Math.max(0, dma.consumoMedido - dma.consumoEsperado);
+                dma.probabilidadFuga = Math.min(99.9, Math.max(0, (dma.diferencia / Math.max(1, dma.consumoMedido)) * 100));
+                dma.contadorAnomalia = dma.diferencia > Math.max(2, dma.consumoEsperado * 0.10)
+                    ? (dma.contadorAnomalia || 0) + 1
+                    : 0;
+                dma.estado = dma.probabilidadFuga > 20 ? 'ALARMA' : (dma.probabilidadFuga > 10 ? 'ADVERTENCIA' : 'NORMAL');
+                if (dma.contadorAnomalia < 5) dma.estado = 'NORMAL';
+                dma.estadoOperativo = dma.estado;
+                if (zona) zona.dma = dma.id;
+
+                if (dma.estado === 'ALARMA' && !dma.alertaEmitida) {
+                    dma.alertaEmitida = true;
+                    const alertContainer = document.getElementById('alert-container');
+                    const msgEstable = document.getElementById('msg-estable');
+                    if (msgEstable) msgEstable.style.display = 'none';
+                    if (alertContainer) {
+                        alertContainer.insertAdjacentHTML('afterbegin', `<div class="alerta-box fuga" data-dma="${dma.id}">
+                            <span class="alerta-time">[${new Date().toLocaleTimeString('es-MX', { hour12: false })}]</span>
+                            <span class="alerta-title">⚠️ ANOMALÍA DMA DETECTADA</span>
+                            <span class="alerta-desc">${dma.id}: se detectan ${dma.diferencia.toFixed(1)} L/s no explicados por el consumo esperado. Probabilidad de fuga: ${dma.probabilidadFuga.toFixed(1)}%.</span>
+                        </div>`);
+                    }
+                }
+                if (dma.estado !== 'ALARMA') {
+                    const alertaDMA = document.querySelector(`[data-dma="${dma.id}"]`);
+                    if (alertaDMA) alertaDMA.remove();
+                    dma.alertaEmitida = false;
+                }
+            });
+        }
+
+        function actualizarSensores() {
+            nodos.forEach((nodo, indice) => {
+                const sensor = sensoresScada[indice] || {
+                    id: `P-${String(102 + indice).padStart(3, '0')}`,
+                    tipo: 'PRESION',
+                    nodo: nodo.id,
+                    ubicacion: nodo.name,
+                    timestamp: 0,
+                    valor: 0,
+                    estado: 'NORMAL',
+                    calidadDato: 'BUENA'
+                };
+                sensor.timestamp = Date.now();
+                sensor.valor = nodo.currentPressure;
+                sensor.estado = obtenerEstadoScada(80 - sensor.valor, {
+                    advertencia: 10,
+                    alarma: 25,
+                    critico: 40
+                });
+                sensor.calidadDato = sensor.valor > 0 ? 'BUENA' : 'SOSPECHOSA';
+                sensoresScada[indice] = sensor;
+            });
+
+            if (!sensoresScada.extendedInitialized) {
+                tuberias.forEach((tuberia, indice) => sensoresScada.push({
+                    id: `Q-${String(201 + indice).padStart(3, '0')}`,
+                    tipo: 'CAUDAL',
+                    ubicacion: `${tuberia.nodoInicio} -> ${tuberia.nodoFin}`,
+                    tuberia: tuberia.id,
+                    timestamp: 0,
+                    valor: 0,
+                    estado: 'NORMAL',
+                    calidadDato: 'BUENA'
+                }));
+                tanques.forEach((tanque, indice) => sensoresScada.push({
+                    id: `N-${String(301 + indice).padStart(3, '0')}`,
+                    tipo: 'NIVEL',
+                    ubicacion: tanque.nombre,
+                    tanque: tanque.id,
+                    timestamp: 0,
+                    valor: 0,
+                    estado: 'NORMAL',
+                    calidadDato: 'BUENA'
+                }));
+                bombas.forEach((bomba, indice) => sensoresScada.push({
+                    id: `B-${String(401 + indice).padStart(3, '0')}`,
+                    tipo: 'BOMBA',
+                    ubicacion: bomba.id,
+                    bomba: bomba.id,
+                    timestamp: 0,
+                    valor: 0,
+                    estado: 'NORMAL',
+                    calidadDato: 'BUENA'
+                }));
+                tuberias.forEach((tuberia, indice) => sensoresScada.push({
+                    id: `V-${String(501 + indice).padStart(3, '0')}`,
+                    tipo: 'VALVULA',
+                    ubicacion: `${tuberia.nodoInicio} -> ${tuberia.nodoFin}`,
+                    tuberia: tuberia.id,
+                    timestamp: 0,
+                    valor: tuberia.estadoValvula,
+                    estado: 'NORMAL',
+                    calidadDato: 'BUENA'
+                }));
+                sensoresScada.extendedInitialized = true;
+            }
+
+            const sensoresCaudal = sensoresScada.filter(sensor => sensor.tipo === 'CAUDAL');
+            tuberias.forEach((tuberia, indice) => {
+                const sensor = sensoresCaudal[indice];
+                if (!sensor) return;
+                sensor.timestamp = Date.now();
+                sensor.valor = tuberia.flujo;
+                sensor.estado = tuberia.pipeState.overloaded ? 'ADVERTENCIA' : 'NORMAL';
+            });
+
+            sensoresScada.filter(sensor => sensor.tipo === 'NIVEL').forEach(sensor => {
+                const tanque = tanques.find(item => item.id === sensor.tanque);
+                sensor.timestamp = Date.now();
+                sensor.valor = tanque ? tanque.nivel : 0;
+                sensor.estado = tanque ? tanque.estado : 'SOSPECHOSA';
+            });
+
+            sensoresScada.filter(sensor => sensor.tipo === 'BOMBA').forEach(sensor => {
+                const bomba = bombas.find(item => item.id === sensor.bomba);
+                sensor.timestamp = Date.now();
+                sensor.valor = bomba ? bomba.eficiencia * 100 : 0;
+                sensor.estado = bomba ? bomba.estado : 'SOSPECHOSA';
+            });
+
+            sensoresScada.filter(sensor => sensor.tipo === 'VALVULA').forEach(sensor => {
+                const tuberia = tuberias.find(item => item.id === sensor.tuberia);
+                sensor.timestamp = Date.now();
+                sensor.valor = tuberia ? tuberia.estadoValvula : 'DESCONOCIDA';
+                sensor.estado = tuberia && tuberia.estadoValvula === 'ABIERTA'
+                    ? 'NORMAL'
+                    : 'ADVERTENCIA';
+            });
+        }
+
+        function actualizarBombas() {
+            const caudalTotal = tuberias
+                .filter(tub => tub.type === 'main' && tub.nodoInicio.startsWith('s'))
+                .reduce((total, tub) => total + Math.max(0, tub.flujo), 0);
+            bombas.forEach((bomba, indice) => {
+                bomba.caudal = caudalTotal / bombas.length;
+                bomba.presionSalida = 82 + (indice * 3);
+                const potenciaHidraulica = DENSIDAD_AGUA * GRAVEDAD *
+                    (bomba.caudal / 1000) * (bomba.presionSalida * 0.70307) / 1000;
+                bomba.eficiencia = Math.max(0.55, Math.min(0.92,
+                    potenciaHidraulica / Math.max(1, bomba.potenciaKW)));
+                bomba.temperaturaMotor = 48 + (bomba.caudal / 100);
+                bomba.vibracion = 0.8 + (bomba.caudal / 1000);
+                bomba.estado = bomba.temperaturaMotor > 85 || bomba.vibracion > 5
+                    ? 'ALARMA'
+                    : (bomba.eficiencia < 0.70 ? 'ADVERTENCIA' : 'NORMAL');
+            });
+        }
+
+        function actualizarFuentesTanques() {
+            fuentesAbastecimiento.forEach(fuente => {
+                const caudalProducido = tuberias
+                    .filter(tub => tub.nodoInicio === fuente.nodo)
+                    .reduce((total, tub) => total + Math.max(0, tub.flujo), 0);
+                fuente.caudalActual = caudalProducido;
+                fuente.estado = caudalProducido > fuente.caudalDisponible
+                    ? 'ALARMA'
+                    : (fuente.nivelActual < 20 ? 'ADVERTENCIA' : 'NORMAL');
+            });
+
+            tanques.forEach(tanque => {
+                tanque.entrada = tuberias
+                    .filter(tub => tub.nodoFin === tanque.nodo)
+                    .reduce((total, tub) => total + Math.max(0, tub.flujo), 0);
+                tanque.salida = tuberias
+                    .filter(tub => tub.nodoInicio === tanque.nodo)
+                    .reduce((total, tub) => total + Math.max(0, tub.flujo), 0);
+                tanque.nivel = Math.max(0, Math.min(100,
+                    tanque.nivel + ((tanque.entrada - tanque.salida) / Math.max(1, tanque.capacidad)) * 0.25
+                ));
+                tanque.estado = tanque.nivel < 15
+                    ? 'CRÍTICO'
+                    : (tanque.nivel < 30 ? 'ADVERTENCIA' : 'NORMAL');
+            });
+        }
+
+        function actualizarHydroBrain() {
+            const dmaProblema = dmas.find(dma => dma.estado !== 'NORMAL');
+            const aiText = document.getElementById('ai-text');
+            if (!aiText) return;
+            if (dmaProblema) {
+                aiText.innerHTML = `⚠️ <b>PÉRDIDA ANORMAL EN ${dmaProblema.id}:</b> Probabilidad de fuga ${dmaProblema.probabilidadFuga.toFixed(1)}%. Pérdida estimada: ${dmaProblema.diferencia.toFixed(1)} L/s. Recomiendo inspección en tubería secundaria.`;
+            }
+        }
+
+        function procesarFisicaRed() {
+            actualizarDemandaHoraria();
+            actualizarFugas();
+            resolverRedHidraulica();
+            actualizarDMAs();
+            actualizarSensores();
+            actualizarFuentesTanques();
+            actualizarBombas();
+            actualizarHydroBrain();
+            actualizarIndicadoresERP();
+
+            const flujoTotalRed = nodos.reduce((total, nodo) => total + (nodo.demandaActual || 0), 0);
+            document.getElementById('stat-flujo').textContent =
+                flujoTotalRed.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' L/s';
+
+            nodos.forEach(nodo => {
+                const presElement = document.getElementById(`popup-pres-${nodo.id}`);
+                if (presElement) {
+                    presElement.textContent = `Presión: ${nodo.currentPressure.toFixed(1)} PSI`;
+                    presElement.style.color = nodo.estado === 'NORMAL' ? '#00e676' : '#ff1744';
+                }
+            });
+        }
+
+        inicializarDMAs();
+
+        function actualizarERP() {
+            const demandaEsperada = dmas.reduce((total, dma) => total + dma.consumoEsperado, 0);
+            const perdidaDMA = dmas.reduce((total, dma) => total + dma.diferencia, 0);
+            const aguaSuministrada = demandaEsperada + perdidaDMA;
+            IANC = aguaSuministrada > 0
+                ? Math.min(100, Math.max(0, (perdidaDMA / aguaSuministrada) * 100))
+                : 5.0;
+            eficienciaBombeo = bombas.length
+                ? Math.round((bombas.reduce((total, bomba) => total + bomba.eficiencia, 0) / bombas.length) * 100)
+                : 0;
+
+            if (eficienciaBombeo < 10) {
+                eficienciaBombeo = 10;
+            }
+
+            let avgPressure = 0;
+
+            const activeNodes = nodos.filter(node =>
+                node.status === 'ok' || node.status === 'alarm'
+            );
+
+            if (activeNodes.length > 0) {
+                avgPressure =
+                    activeNodes.reduce(
+                        (sum, node) => sum + node.currentPressure,
+                        0
+                    ) / activeNodes.length;
+            }
+
+            document.getElementById('kpi-ianc').textContent =
+                IANC.toFixed(1) + "%";
+
+            document.getElementById('kpi-ianc').style.color =
+                IANC > 15
+                    ? '#ff1744'
+                    : (IANC > 10 ? '#ff9100' : '#00e676');
+
+            document.getElementById('kpi-presion').textContent =
+                avgPressure.toFixed(1) + " PSI";
+
+            document.getElementById('kpi-presion').style.color =
+                avgPressure < 60
+                    ? '#ff1744'
+                    : (avgPressure < 75 ? '#ff9100' : '#00e676');
+
+            document.getElementById('efi-val').textContent =
+                eficienciaBombeo + "%";
+
+            const barra = document.getElementById('efi-bar');
+            barra.style.width = eficienciaBombeo + "%";
+            barra.style.background =
+                eficienciaBombeo < 50
+                    ? '#ff1744'
+                    : (eficienciaBombeo < 80 ? '#ffea00' : '#00e676');
+
+            document.getElementById('stat-cuadrillas').textContent =
+                `${cuadrillasDisponibles}/8`;
+
+            const aiText = document.getElementById('ai-text');
+
+            if (avgPressure < 60 && IANC > 15) {
+                aiText.innerHTML =
+                    "⚠️ <b>CRISIS HIDRÁULICA DETECTADA:</b> Despresurización crítica general y pérdidas severas de acuerdo al modelo de Bernoulli. Aísla válvulas maestras de inmediato.";
+            } else if (avgPressure < 70) {
+                aiText.innerHTML =
+                    "⚠️ <b>ALERTA DE PRESIÓN:</b> Caída generalizada de presión en la red. Hay un alto riesgo de desabasto en zonas elevadas o periféricas.";
+            } else if (IANC > 12) {
+                aiText.innerHTML =
+                    "💧 <b>PÉRDIDA DE CARGA DINÁMICA:</b> Las fugas actuales superan la capacidad volumétrica óptima. Sectores vulnerables comprometidos.";
+            } else if (alertasActivas > 0) {
+                aiText.innerHTML =
+                    "🔧 <b>RUTINA DE MANTENIMIENTO:</b> Fluctuación de presión localizada detectada en nodos periféricos. Despliegue de cuadrillas recomendado.";
+            } else {
+                aiText.innerHTML =
+                    "✅ <b>ENTORNO ESTABLE:</b> Red operando en eficiencia óptima. Presión y distribución equilibradas bajo el modelo de continuidad.";
+            }
+        }
+
+        // --- 7. SISTEMA DE BITÁCORA / HISTORIAL ---
+        function registrarHistorial(sector, inspector, resultado, tiempo, detalles = {}) {
+            const date = new Date();
+
+            const folio =
+                `TC-${date.getFullYear()}-${String(folioCounter++).padStart(5, '0')}`;
+
+            const fecha = date.toLocaleDateString('es-MX');
+            const hora = date.toLocaleTimeString('es-MX', {
+                hour12: false
+            });
+
+            const evento = {
+                folio,
+                fecha,
+                hora,
+                sector,
+                inspector,
+                resultado,
+                tiempo,
+                material: detalles.material || 'No especificado',
+                personal: detalles.personal || inspector,
+                estado: 'CERRADO'
+            };
+
+            historialEventos.push(evento);
+
+            const msgHistorial =
+                document.getElementById('msg-historial');
+
+            if (msgHistorial) {
+                msgHistorial.style.display = 'none';
+            }
+
+            const container =
+                document.getElementById('historial-container');
+
+            const html = `
+                <div class="alerta-box historial">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span class="alerta-time">
+                            <i class="far fa-clock"></i> ${fecha} ${hora}
+                        </span>
+                        <span style="font-weight:bold; font-size:12px; color:#38bdf8; background:#0f172a; padding:2px 6px; border-radius:3px;">
+                            ${folio}
+                        </span>
+                    </div>
+                    <div style="margin-top:6px; border-top:1px solid #334155; padding-top:6px;">
+                        <span style="display:block; margin-bottom:2px;">
+                            <b>Zona:</b> ${sector}
+                        </span>
+                        <span style="display:block; color:#cbd5e1;">
+                            <b>Asignación:</b> ${inspector} |
+                            <b>Maniobra:</b> ${tiempo} min
+                        </span>
+                        <span style="display:block; color:#cbd5e1;">
+                            <b>Material:</b> ${evento.material}
+                        </span>
+                        <span style="display:block; color:#10b981; font-weight:bold; margin-top:4px; font-size: 11px; text-transform:uppercase;">
+                            <i class="fas fa-check"></i>
+                            Ticket Cerrado - ${resultado}
+                        </span>
+                    </div>
+                </div>`;
+
+            container.insertAdjacentHTML('afterbegin', html);
+        }
+
+        function generarIncidente() {
+            const nodosSanos =
+                nodos.filter(nodo => nodo.status === 'ok');
+
+            if (nodosSanos.length === 0) {
+                return;
+            }
+
+            const nodoProblema =
+                nodosSanos[Math.floor(Math.random() * nodosSanos.length)];
+
+            const options =
+                catalogoIncidentes[nodoProblema.type] ||
+                catalogoIncidentes.colonia;
+
+            const incidente =
+                options[Math.floor(Math.random() * options.length)];
+
+            const timeStr =
+                new Date().toLocaleTimeString('es-MX', {
+                    hour12: false
+                });
+
+            const eventId = `evt_${systemIdCounter++}`;
+            incidentesOperativos.push({
+                id: eventId,
+                fecha: new Date(),
+                tipo: incidente.tipo,
+                zona: nodoProblema.name,
+                causa: incidente.tipo,
+                estado: 'EVENTO GENERADO',
+                mttr: 0,
+                material: 'Por determinar',
+                personal: 'Pendiente'
+            });
+
+            nodoProblema.status = 'alarm';
+            const fugaDetectada = crearFugaDinamica(nodoProblema, incidente);
+            nodoProblema.fugaActiva = fugaDetectada;
+
+            const marker = nodosMarkers[nodoProblema.id];
+
+            marker._path.classList.remove('node-normal');
+            marker._path.classList.add(incidente.css);
+
+            alertasActivas++;
+
+            procesarFisicaRed();
+            actualizarERP();
+
+            const container =
+                document.getElementById('alert-container');
+
+            const msgEstable =
+                document.getElementById('msg-estable');
+
+            if (msgEstable) {
+                msgEstable.style.display = 'none';
+            }
+
+            const alertHtml = `
+                <div class="alerta-box ${incidente.clase}" id="${eventId}">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span class="alerta-time">[${timeStr}]</span>
+                        <span class="estado-txt" style="font-weight:bold; font-size:11px; color:#fff; letter-spacing:0.5px;">
+                            ALERTA ACTIVA
+                        </span>
+                    </div>
+                    <span class="alerta-title">
+                        ${incidente.icono} ${incidente.tipo}
+                    </span>
+                    <span class="alerta-desc">
+                        ${incidente.desc}
+                    </span>
+                    <div style="background:rgba(0,0,0,0.2); padding:6px; border-radius:4px; margin-bottom:5px;">
+                        <b>Sector:</b> ${nodoProblema.name}<br>
+                        <span style="font-size:11px; color:#ff1744; font-weight:600;">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Fuga dinámica: ${fugaDetectada.tipo}
+                        </span><br>
+                    </div>
+                    <button class="btn-despachar"
+                            id="btn_${eventId}"
+                            onclick="despacharPersonal('${eventId}', '${nodoProblema.id}')">
+                        <i class="fas ${incidente.iconBtn}"></i>
+                        ${incidente.accion}
+                    </button>
+                </div>`;
+
+            container.insertAdjacentHTML('afterbegin', alertHtml);
+
+            map.flyTo(
+                [nodoProblema.lat, nodoProblema.lng],
+                14.5,
+                {
+                    duration: 1.2
+                }
+            );
+        }
+
+        window.despacharPersonal = function(eventId, nodeId) {
+            if (cuadrillasDisponibles <= 0) {
+                alert("¡Personal agotado! La capacidad de respuesta está al límite.");
+                return;
+            }
+
+            cuadrillasDisponibles--;
+            actualizarERP();
+
+            const numCuadrillaAsignada =
+                8 - cuadrillasDisponibles;
+
+            const cuadrillaNombre =
+                "Unidad Operativa " + numCuadrillaAsignada;
+
+            const btn =
+                document.getElementById(`btn_${eventId}`);
+
+            const alertaDiv =
+                document.getElementById(eventId);
+
+            const estadoTxt =
+                alertaDiv.querySelector('.estado-txt');
+
+            const marker =
+                nodosMarkers[nodeId];
+
+            const nodoObjetivo =
+                nodos.find(node => node.id === nodeId);
+            const incidenteOperativo = incidentesOperativos.find(item => item.id === eventId);
+            const inicioAtencion = Date.now();
+
+            if (incidenteOperativo) {
+                incidenteOperativo.estado = 'ANÁLISIS IA';
+                incidenteOperativo.personal = cuadrillaNombre;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML =
+                `<i class="fas fa-brain"></i> Análisis IA y asignación...`;
+
+            alertaDiv.className =
+                'alerta-box reparando';
+
+            estadoTxt.textContent = 'EN CAMPO';
+            estadoTxt.style.color = '#fbbf24';
+
+            marker._path.classList.remove(
+                'node-fuga',
+                'node-falla',
+                'node-electrico',
+                'node-comms',
+                'node-clandestina'
+            );
+
+            marker._path.classList.add('node-reparando');
+            if (incidenteOperativo) incidenteOperativo.estado = 'ASIGNACIÓN CUADRILLA';
+
+            setTimeout(() => {
+                btn.innerHTML =
+                    `<i class="fas fa-truck-fast"></i> EN RUTA...`;
+                if (incidenteOperativo) incidenteOperativo.estado = 'EN RUTA';
+
+                estadoTxt.textContent =
+                    'EN RUTA';
+
+                setTimeout(() => {
+                    if (incidenteOperativo) incidenteOperativo.estado = 'LLEGADA / AISLAMIENTO';
+                    estadoTxt.textContent = 'AISLAMIENTO';
+                    btn.innerHTML = `<i class="fas fa-lock"></i> Aislando tramo...`;
+
+                    setTimeout(() => {
+                        if (incidenteOperativo) incidenteOperativo.estado = 'REPARACIÓN';
+                        estadoTxt.textContent = 'REPARACIÓN';
+                        btn.innerHTML = `<i class="fas fa-wrench"></i> Reparando infraestructura...`;
+
+                        setTimeout(() => {
+                            if (incidenteOperativo) incidenteOperativo.estado = 'PRUEBA HIDRÁULICA';
+                            estadoTxt.textContent = 'PRUEBA HIDRÁULICA';
+                            btn.innerHTML = `<i class="fas fa-gauge-high"></i> Verificando presión...`;
+
+                    estadoTxt.textContent =
+                        'SISTEMA RESTABLECIDO';
+
+                    estadoTxt.style.color =
+                        '#10b981';
+
+                    alertaDiv.className =
+                        'alerta-box resuelto';
+
+                    marker._path.classList.remove(
+                        'node-reparando'
+                    );
+
+                    marker._path.classList.add(
+                        'node-normal'
+                    );
+
+                    let resultadoFinal =
+                        'Reparación Exitosa';
+                    let fugaReparada = null;
+
+                    if (nodoObjetivo) {
+                        nodoObjetivo.status = 'ok';
+                        nodoObjetivo.currentDemand =
+                            nodoObjetivo.demand;
+                        nodoObjetivo.currentPressure =
+                            nodoObjetivo.basePressure;
+
+                        if (nodoObjetivo.fugaActiva) {
+                            fugaReparada = nodoObjetivo.fugaActiva;
+                            tuberias.forEach(tuberia => {
+                                if (tuberia.fuga === nodoObjetivo.fugaActiva) {
+                                    tuberia.fuga = null;
+                                }
+                            });
+                            nodoObjetivo.fugaDomiciliaria = null;
+                            nodoObjetivo.fugaActiva = null;
+                        }
+
+                        if (nodoObjetivo.tomaClandestina) {
+                            nodoObjetivo.tomaClandestina = false;
+                            nodoObjetivo.consumoNoRegistrado = 0;
+                            detectorEnCurso = false;
+                            detectorNodo = null;
+                            resultadoFinal =
+                                'Infraestructura Ilegal Desmantelada';
+                        }
+                    }
+
+                    const tiempoRespuesta = Math.max(1, Math.round((Date.now() - inicioAtencion) / 60000));
+                    if (incidenteOperativo) {
+                        incidenteOperativo.estado = 'CIERRE';
+                        incidenteOperativo.mttr = tiempoRespuesta;
+                        incidenteOperativo.material = fugaReparada
+                            ? fugaReparada.material
+                            : 'Kit de válvula';
+                    }
+                    registrarHistorial(
+                        nodoObjetivo.name,
+                        cuadrillaNombre,
+                        resultadoFinal,
+                        tiempoRespuesta,
+                        {
+                            material: incidenteOperativo ? incidenteOperativo.material : 'Kit de reparación',
+                            personal: cuadrillaNombre
+                        }
+                    );
+
+                    procesarFisicaRed();
+                    btn.style.display = 'none';
+
+                    setTimeout(() => {
+                        alertaDiv.style.opacity = '0';
+
+                        setTimeout(() => {
+                            alertaDiv.remove();
+
+                            if (
+                                document.querySelectorAll(
+                                    '#alert-container .alerta-box'
+                                ).length === 0
+                            ) {
+                                const msgEstable =
+                                    document.getElementById('msg-estable');
+
+                                if (msgEstable) {
+                                    msgEstable.style.display = 'block';
+                                }
+                            }
+                        }, 500);
+                    }, 3500);
+
+                    alertasActivas--;
+                    cuadrillasDisponibles++;
+
+                    actualizarERP();
+                        }, 4000);
+                    }, 2000);
+                }, 5500);
+            }, 3000);
+        };
+
+        window.forzarIncidente = function() {
+            generarIncidente();
+        };
+
+        // --- 8. SIMULADOR DE TOMAS CLANDESTINAS ---
+        function simularTomaClandestina() {
+            if (detectorEnCurso) {
+                return;
+            }
+
+            const colonias =
+                nodos.filter(nodo =>
+                    nodo.type === 'colonia' &&
+                    nodo.status === 'ok'
+                );
+
+            if (!colonias.length) {
+                return;
+            }
+
+            detectorEnCurso = true;
+
+            detectorNodo =
+                colonias[Math.floor(Math.random() * colonias.length)];
+
+            detectorNodo.tomaClandestina = true;
+
+            const volumenRobado = 18 + Math.random() * 22;
+            detectorNodo.consumoNoRegistrado = volumenRobado;
+
+            detectorConfianza =
+                (93 + Math.random() * 6.8).toFixed(1);
+
+            detectorPerdida =
+                volumenRobado.toFixed(0);
+
+            detectorNodo.status = 'alarm';
+
+            nodosMarkers[detectorNodo.id]._path.classList.add(
+                'node-clandestina'
+            );
+
+            alertasActivas++;
+
+            procesarFisicaRed();
+            actualizarERP();
+
+            const eventId =
+                `evt_${systemIdCounter++}`;
+
+            const timeStr =
+                new Date().toLocaleTimeString('es-MX', {
+                    hour12: false
+                });
+
+            const msgEstable =
+                document.getElementById('msg-estable');
+
+            if (msgEstable) {
+                msgEstable.style.display = 'none';
+            }
+
+            const alertHtml = `
+                <div class="alerta-box fuga"
+                     id="${eventId}"
+                     style="border-left-color:#ec4899; background:linear-gradient(90deg, rgba(236,72,153,0.15) 0%, rgba(31,41,55,0.6) 100%);">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span class="alerta-time">[${timeStr}]</span>
+                        <span class="estado-txt"
+                              style="font-weight:bold; font-size:11px; color:#ec4899; letter-spacing:1px;">
+                            <i class="fas fa-brain"></i>
+                            HYDROBRAIN IA
+                        </span>
+                    </div>
+                    <b style="font-size:14px; display:block; margin-top:4px;">
+                        🚨 POSIBLE TOMA CLANDESTINA DETECTADA
+                    </b>
+                    <div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:4px; margin:6px 0; border:1px dashed #ec4899;">
+                        <b>Sector DMA:</b> ${detectorNodo.name}<br>
+                        <b>Confianza IA:</b> ${detectorConfianza}%<br>
+                        <b style="color:#ff1744;">
+                            Incremento nocturno no registrado: ${volumenRobado.toFixed(1)} L/s
+                        </b><br>
+                        <b>Desvío hidráulico estimado:</b>
+                        ${volumenRobado.toFixed(1)} L/s
+                    </div>
+                    <button class="btn-despachar"
+                            id="btn_${eventId}"
+                            onclick="despacharPersonal('${eventId}', '${detectorNodo.id}')"
+                            style="background:#db2777; color:white; border:1px solid #be185d;">
+                        <i class="fas fa-shield-alt"></i>
+                        Desplegar Inspección
+                    </button>
+                </div>`;
+
+            document
+                .getElementById('alert-container')
+                .insertAdjacentHTML('afterbegin', alertHtml);
+
+            map.flyTo(
+                [detectorNodo.lat, detectorNodo.lng],
+                15.5,
+                {
+                    duration: 2.0,
+                    easeLinearity: 0.25
+                }
+            );
+        }
+
+        // --- 9. LOOPS DE SIMULACIÓN ---
+        setInterval(procesarFisicaRed, 1000);
+
+        setInterval(() => {
+            if (alertasActivas < 6 && Math.random() > 0.45) {
+                generarIncidente();
+            }
+        }, 22000);
+
+        setInterval(() => {
+            if (!detectorEnCurso && Math.random() > 0.65) {
+                simularTomaClandestina();
+            }
+        }, 35000);
+
+        setInterval(actualizarERP, 4000);
+
+        // --- 10. INICIALIZACIÓN ---
+        setTimeout(procesarFisicaRed, 500);
+        setTimeout(generarIncidente, 2500);
+        setTimeout(simularTomaClandestina, 15000);
+        // --- SUSTITUYE TU ANTERIOR CONSOLE.LOG POR ESTE ---
+console.log(
+    "%c HydroOS v3 Enterprise %c 2026 © Return 0  SAS %c Booting Hydraulic Physics Engine...", 
+    "background:#00e676;color:#000;font-weight:bold;padding:4px;", 
+    "background:#121826;color:#00e676;padding:4px;border:1px solid #00e676;", 
+    "color:#00e676;"
+);
+    </script>
+</body>
+</html>
