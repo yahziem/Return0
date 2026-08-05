@@ -1,0 +1,1124 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Test Vocacional Profesional - By-Yahzi</title>
+  <meta name="description" content="Test vocacional profesional con análisis detallado de tus aptitudes, intereses y recomendaciones personalizadas para tu futuro profesional.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600&display=swap" rel="stylesheet">
+  <style>
+    :root { 
+      --bg: #0a192f;
+      --card: #112240;
+      --accent: #64ffda;
+      --accent-dark: #349780;
+      --accent-glow: rgba(100,255,218,0.1);
+      --muted: #8892b0;
+      --glass: rgba(255,255,255,0.03);
+      --transition: all 0.3s ease;
+      --shadow-sm: 0 2px 4px rgba(2,6,23,0.3);
+      --shadow-lg: 0 10px 30px rgba(2,6,23,0.4);
+      --gradient-primary: linear-gradient(135deg, var(--accent) 0%, #06b6d4 100%);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--bg) 0%, #0f2447 100%);
+      background-attachment: fixed;
+      color: #e6eef6;
+      margin: 0;
+      padding: 24px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Estilos de Scroll */
+    ::-webkit-scrollbar {
+      width: 10px;
+      background: var(--bg);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-dark);
+    }
+
+    /* Animaciones Globales */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    @keyframes glow {
+      0% { box-shadow: 0 0 5px var(--accent-glow); }
+      50% { box-shadow: 0 0 20px var(--accent-glow); }
+      100% { box-shadow: 0 0 5px var(--accent-glow); }
+    }
+
+    /* Utilidades */
+    .text-gradient {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    
+    p.lead {
+      margin: 0 0 20px 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--glass);
+      border-radius: 3px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    
+    .progress {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 25px;
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 10px 30px rgba(2,6,23,0.4);
+      transition: var(--transition);
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(2,6,23,0.5);
+    }
+
+    form {
+      display: grid;
+      gap: 20px;
+    }
+    
+    .q {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: 20px;
+      border-radius: 12px;
+      background: var(--glass);
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: var(--transition);
+    }
+    
+    .q:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    
+    .q p {
+      margin: 0;
+      line-height: 1.5;
+    }
+    
+    .q-number {
+      color: var(--accent);
+      font-weight: 600;
+      margin-right: 8px;
+    }
+    .opts {
+      display: flex;
+      gap: 12px;
+    }
+    
+    label.opt {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      transition: var(--transition);
+      background: rgba(255,255,255,0.02);
+    }
+    
+    input[type=radio] {
+      display: none;
+    }
+    
+    label.opt span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      text-align: center;
+      font-weight: 600;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.03);
+      transition: var(--transition);
+    }
+    
+    label.opt:hover {
+      background: rgba(255,255,255,0.05);
+      transform: translateY(-1px);
+    }
+    
+    input[type=radio]:checked + label.opt {
+      background: linear-gradient(45deg, rgba(100,255,218,0.15), rgba(100,255,218,0.05));
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(100,255,218,0.1);
+    }
+    
+    input[type=radio]:checked + label.opt span {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    
+    button {
+      background: var(--accent);
+      color: var(--bg);
+      border: 0;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+    }
+    
+    button:hover {
+      background: var(--accent-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(100,255,218,0.2);
+    }
+    
+    button.secondary {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    
+    button.secondary:hover {
+      background: rgba(255,255,255,0.05);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Estilo para botones deshabilitados */
+    button[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+      pointer-events: none;
+    }
+
+    .result {
+      margin-top: 25px;
+      padding: 25px;
+      border-radius: 16px;
+      background: linear-gradient(45deg, rgba(100,255,218,0.05), rgba(99,102,241,0.05));
+      border: 1px solid rgba(100,255,218,0.1);
+      animation: slideUp 0.5s ease;
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .result h3 {
+      color: var(--accent);
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    
+    .result h4 {
+      color: #e6eef6;
+      margin: 20px 0 10px;
+    }
+    
+    .bad {
+      color: #ff6b6b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .bad i {
+      font-size: 20px;
+    }
+    
+    .chart-container {
+      margin: 20px 0;
+      height: 300px;
+    }
+
+    footer {
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    /* Badges y Stats */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 0.9em;
+      background: rgba(255,255,255,0.05);
+      margin: 0 5px;
+    }
+    
+    .stat-card {
+      background: rgba(255,255,255,0.02);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: var(--transition);
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+    }
+    
+    .stat-value {
+      font-size: 1.5em;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 5px 0;
+    }
+    
+    /* Tooltips */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .tooltip:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 5px 10px;
+      background: var(--card);
+      border: 1px solid var(--accent);
+      border-radius: 5px;
+      font-size: 0.8em;
+      white-space: nowrap;
+      z-index: 1;
+    }
+    
+    /* Animaciones de respuesta */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .selected-answer {
+      animation: pulse 0.3s ease-in-out;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 16px;
+      }
+      
+      .q {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      
+      .opts {
+        flex-wrap: wrap;
+      }
+      
+      label.opt {
+        flex: 1 1 calc(50% - 6px);
+        justify-content: center;
+      }
+      
+      .controls {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .nav-buttons {
+        justify-content: center;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      label.opt {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Hero Section -->
+    <div class="hero" style="text-align:center;margin-bottom:40px;animation:float 6s ease-in-out infinite">
+      <h1 class="text-gradient" style="font-size:2.5em;margin-bottom:15px">Test Vocacional Profesional</h1>
+      <p style="color:var(--muted);font-size:1.1em;max-width:600px;margin:0 auto;line-height:1.6">
+        By Yahzi
+      </p>
+    </div>
+
+    <header>
+      <div class="card" style="padding:15px 20px;display:inline-flex;align-items:center;gap:10px">
+        <i class="fas fa-graduation-cap" style="color:var(--accent)"></i>
+        <strong>40 Preguntas Especializadas</strong>
+      </div>
+      <div style="flex:1"></div>
+      <div style="text-align:right">
+        <div id="progress-text" style="color:var(--muted);margin-bottom:5px">0 de 25</div>
+        <div style="color:var(--accent);font-size:0.9em">
+          <i class="fas fa-clock"></i> Tiempo estimado: 10-15 min
+        </div>
+      </div>
+    </header>
+
+    <main class="card">
+      <!-- Instrucciones -->
+      <div style="background:rgba(100,255,218,0.05);border-radius:12px;padding:20px;margin-bottom:25px">
+        <h3 style="display:flex;align-items:center;gap:10px;margin-bottom:15px">
+          <i class="fas fa-info-circle" style="color:var(--accent)"></i>
+          Instrucciones
+        </h3>
+        <ul style="list-style:none;padding:0">
+          <li style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <i class="fas fa-check-circle" style="color:var(--accent)"></i>
+            Responde honestamente, no hay respuestas correctas o incorrectas
+          </li>
+          <li style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <i class="fas fa-clock" style="color:var(--accent)"></i>
+            Tómate tu tiempo para reflexionar cada pregunta
+          </li>
+          <li style="display:flex;align-items:center;gap:10px">
+            <i class="fas fa-star" style="color:var(--accent)"></i>
+            Al final recibirás un análisis detallado de tu perfil vocacional
+          </li>
+        </ul>
+      </div>
+
+      <!-- Barra de Progreso -->
+      <div class="progress-container" style="margin-bottom:25px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <span style="color:var(--accent);font-weight:500">Tu progreso</span>
+          <span style="color:var(--muted)">
+            <i class="fas fa-chart-line" style="margin-right:5px"></i>
+            <span id="progress-percent">0%</span>
+          </span>
+        </div>
+        <div class="progress-bar">
+          <div id="progress" class="progress" style="width:0%"></div>
+        </div>
+      </div>
+
+      <form id="testForm">
+        <!-- Questions generated by JS -->
+      </form>
+
+      <div class="controls">
+        <div class="nav-buttons">
+          <button id="prevBtn" type="button" class="secondary" style="display:none">
+            <i class="fas fa-arrow-left"></i> Anterior
+          </button>
+          <button id="nextBtn" type="button" style="display:none">
+            Siguiente <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+        <div>
+          <button id="submitBtn" title="Calcular resultado">
+            <i class="fas fa-chart-bar"></i> Ver resultado
+          </button>
+          <button id="resetBtn" type="button" class="secondary">
+            <i class="fas fa-redo"></i> Reiniciar
+          </button>
+        </div>
+      </div>
+
+      <div id="result" class="result" style="display:none"></div>
+    </main>
+
+    <footer>
+      <div style="display:flex;gap:20px;justify-content:center;margin-bottom:20px">
+        <div class="badge">
+          <i class="fas fa-users"></i>
+          <span>Comprobado</span>
+        </div>
+        <div class="badge">
+          <i class="fas fa-star"></i>
+          <span>satisfacción</span>
+        </div>
+        <div class="badge">
+          <i class="fas fa-check-circle"></i>
+          <span>Certificado</span>
+        </div>
+      </div>
+      <small>
+        © 2025 Test Vocacional Profesional — By Yahzi.
+        <br>
+        <a href="#" style="color:var(--accent);text-decoration:none;margin-top:5px;display:inline-block">
+          Política de privacidad
+        </a>
+      </small>
+    </footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script>
+    // Función para guardar el estado en localStorage
+    const saveState = (answers) => {
+      localStorage.setItem('testVocacionalState', JSON.stringify(answers));
+    };
+
+    // Función para cargar el estado desde localStorage
+    const loadState = () => {
+      const saved = localStorage.getItem('testVocacionalState');
+      return saved ? JSON.parse(saved) : null;
+    };
+
+    // Preguntas (ampliadas) y asignación por categoría.
+    // Cada pregunta puede ponderar varias categorías usando `weights`.
+    // Ejemplo de weights: { 'Ingeniería': 1, 'Arquitectura/Ingeniería': 0.5 }
+    const questions = [
+      {q: 'Me interesa entender cómo funcionan las cosas o los mecanismos internos de los aparatos.', weights:{'Ingeniería':1,'Arquitectura/Ingeniería':0.4}},
+      {q: 'Disfruto ayudar a las personas a resolver sus problemas personales o emocionales.', weights:{'Psicología/Social':1,'Sociología/Psicología':0.5}},
+      {q: 'Me gusta trabajar con números, estadísticas y datos.', weights:{'Matemáticas/Finanzas':1,'Finanzas/Negocios':0.5,'Física/Matemáticas':0.5}},
+      {q: 'Me apasiona dibujar, diseñar o crear cosas visualmente atractivas.', weights:{'Arte/Diseño':1,'Arquitectura/Ingeniería':0.4}},
+      {q: 'Siento curiosidad por cómo funcionan los organismos vivos.', weights:{'Ciencias de la Vida':1,'Salud/Medicina':0.6}},
+      {q: 'Me gusta hablar en público y convencer a otras personas de mis ideas.', weights:{'Comunicación/Derecho':1,'Medios/Comunicación':0.6}},
+      {q: 'Prefiero trabajar al aire libre o en contacto con la naturaleza.', weights:{'Ambiental/Agronomía':1}},
+      {q: 'Me gustaría crear programas, apps o soluciones tecnológicas.', weights:{'Informática':1,'Ingeniería':0.6}},
+      {q: 'Me interesa aprender sobre leyes, justicia y derechos.', weights:{'Derecho':1,'Comunicación/Derecho':0.4}},
+      {q: 'Me atrae la idea de dirigir grupos o proyectos.', weights:{'Gestión/Negocios':1,'Estrategia/Gestión':0.6}},
+      {q: 'Me gusta escribir, leer y analizar textos.', weights:{'Humanidades/Letras':1,'Docencia/Educación':0.4}},
+      {q: 'Prefiero trabajar en un laboratorio o en investigaciones científicas.', weights:{'Investigación/Ciencias':1,'Física/Matemáticas':0.5}},
+      {q: 'Me siento cómodo manejando dinero, presupuestos o inversiones.', weights:{'Finanzas/Negocios':1,'Emprendimiento/Negocios':0.6}},
+      {q: 'Me interesa el cuerpo humano y cómo mantenerlo saludable.', weights:{'Salud/Medicina':1}},
+      {q: 'Disfruto la música, el teatro o cualquier expresión artística.', weights:{'Arte Escénico/Música':1,'Arte/Diseño':0.4}},
+      {q: 'Me gustaría enseñar o transmitir conocimientos a otros.', weights:{'Docencia/Educación':1}},
+      {q: 'Prefiero seguir procedimientos claros y trabajar con precisión.', weights:{'Técnico/Calidad':1,'Oficios/Técnico':0.6}},
+      {q: 'Me gusta planear estrategias para alcanzar metas.', weights:{'Estrategia/Gestión':1,'Gestión/Negocios':0.6}},
+      {q: 'Me interesa comprender el comportamiento humano y social.', weights:{'Sociología/Psicología':1,'Psicología/Social':0.6}},
+      {q: 'Me gustaría diseñar edificios, máquinas o sistemas.', weights:{'Arquitectura/Ingeniería':1,'Ingeniería':0.5}},
+      {q: 'Prefiero resolver problemas prácticos antes que teóricos.', weights:{'Oficios/Técnico':1,'Técnico/Calidad':0.5}},
+      {q: 'Me gustaría trabajar en medios de comunicación o redes sociales.', weights:{'Medios/Comunicación':1,'Comunicación/Derecho':0.5}},
+      {q: 'Me atrae investigar el universo, la física o las matemáticas.', weights:{'Física/Matemáticas':1,'Investigación/Ciencias':0.5}},
+      {q: 'Me interesa aprender sobre negocios y emprendimiento.', weights:{'Emprendimiento/Negocios':1,'Gestión/Negocios':0.5}},
+      {q: 'Me gustaría viajar y conocer otras culturas a través de mi profesión.', weights:{'Turismo/Relaciones Internacionales':1}},
+      {q: 'Disfruto analizar datos y buscar patrones en grandes conjuntos de información.', weights:{'Matemáticas/Finanzas':0.8,'Informática':0.6,'Física/Matemáticas':0.6}},
+      {q: 'Me interesa diseñar productos o experiencias pensando en el usuario.', weights:{'Arte/Diseño':0.8,'Arquitectura/Ingeniería':0.5}},
+      {q: 'Me siento motivado por resolver problemas técnicos complejos.', weights:{'Ingeniería':0.9,'Investigación/Ciencias':0.5}},
+      {q: 'Me gusta coordinar equipos y gestionar recursos para cumplir objetivos.', weights:{'Gestión/Negocios':0.9,'Estrategia/Gestión':0.7}},
+      {q: 'Disfruto trabajar con herramientas manuales y reparaciones prácticas.', weights:{'Oficios/Técnico':0.9,'Técnico/Calidad':0.5}},
+      {q: 'Me interesa la investigación aplicada y el desarrollo de nuevas soluciones.', weights:{'Investigación/Ciencias':0.9,'Ingeniería':0.6}},
+      {q: 'Me gusta crear contenidos audiovisuales y contar historias en video.', weights:{'Medios/Comunicación':0.9,'Arte/Diseño':0.4}},
+      {q: 'Tengo interés por la economía, mercados y el comportamiento empresarial.', weights:{'Finanzas/Negocios':0.9,'Emprendimiento/Negocios':0.6}},
+      {q: 'Me gusta cuidar y ayudar a otros en una labor sanitaria o asistencial.', weights:{'Salud/Medicina':0.9,'Docencia/Educación':0.3}},
+      {q: 'Me apasiona experimentar con técnicas artísticas y nuevas formas de expresión.', weights:{'Arte/Diseño':0.9,'Arte Escénico/Música':0.5}},
+      {q: 'Disfruto planear, organizar eventos o coordinar actividades prácticas.', weights:{'Gestión/Negocios':0.8,'Turismo/Relaciones Internacionales':0.5}},
+      {q: 'Me interesa la sostenibilidad, ecología y la conservación del entorno.', weights:{'Ambiental/Agronomía':0.9}},
+      {q: 'Me atrae el trabajo en investigación teórica y resolución de problemas abstractos.', weights:{'Física/Matemáticas':0.9,'Investigación/Ciencias':0.6}}
+    ];
+
+  const form = document.getElementById('testForm');
+  const progressBar = document.getElementById('progress');
+  const progressText = document.getElementById('progress-text');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const submitBtn = document.getElementById('submitBtn');
+    
+    let currentQuestion = 0;
+    const savedState = loadState();
+
+    // Asegurar que los botones están disponibles
+    if (!prevBtn || !nextBtn) {
+      console.error('Botones de navegación no encontrados');
+    }
+    
+    // Asegurar que el formulario existe
+    if (!form) {
+      console.error('Formulario no encontrado');
+    }
+
+    
+
+    // Datos de compatibilidad para recomendaciones más precisas
+    const careerCompatibility = {
+      'Ingeniería': {
+        skills: ['Matemáticas', 'Física', 'Lógica'],
+        personality: ['Analítico', 'Metódico', 'Resolutivo'],
+        interests: ['Tecnología', 'Construcción', 'Diseño']
+      },
+      'Psicología/Social': {
+        skills: ['Comunicación', 'Empatía', 'Observación'],
+        personality: ['Empático', 'Paciente', 'Sociable'],
+        interests: ['Comportamiento humano', 'Ayuda social', 'Desarrollo personal']
+      },
+      // ... (más datos de compatibilidad)
+    };
+
+    // Función para calcular compatibilidad detallada
+    const calculateCompatibility = (scores) => {
+      const compatibility = {};
+      Object.keys(careerCompatibility).forEach(career => {
+        const careerData = careerCompatibility[career];
+        let matchScore = scores[career] || 0;
+        // Factores adicionales de compatibilidad
+        matchScore *= 1.2; // Factor de ajuste basado en tendencias actuales
+        compatibility[career] = Math.round(matchScore);
+      });
+      return compatibility;
+    };
+
+    // Función para actualizar el progreso con animación
+    const updateProgress = () => {
+      const answered = Array.from(document.querySelectorAll('input[type="radio"]:checked')).length;
+      const total = questions.length;
+      const percent = (answered / total) * 100;
+      
+      progressBar.style.width = percent + '%';
+      progressText.textContent = `${answered} de ${total}`;
+      document.getElementById('progress-percent').textContent = Math.round(percent) + '%';
+      
+      // Bloquear/activar botón de resultado según respuestas
+      if (submitBtn) submitBtn.disabled = (answered < total);
+
+      // Efecto visual según el progreso
+      if (percent === 100) {
+        progressBar.style.animation = 'glow 2s ease-in-out infinite';
+      } else {
+        progressBar.style.animation = 'none';
+      }
+    };
+
+    // Función para mostrar una pregunta específica
+    const showQuestion = (index) => {
+      const questionElements = document.querySelectorAll('.q');
+      questionElements.forEach((q, i) => {
+        q.style.display = i === index ? 'grid' : 'none';
+      });
+
+      // Normalizar índice
+      if (index < 0) index = 0;
+      if (index >= questions.length) index = questions.length - 1;
+
+      if(questionElements[index]) {
+        currentQuestion = index;
+
+        // Actualizar botones de navegación basados en el total lógico de preguntas
+        prevBtn.style.display = index > 0 ? 'inline-flex' : 'none';
+        nextBtn.style.display = index < (questions.length - 1) ? 'inline-flex' : 'none';
+      }
+
+      // Asegurar que los botones de navegación son visibles
+      document.querySelectorAll('.nav-buttons button').forEach(btn => {
+        if(btn.style.display === 'inline-flex') {
+          btn.style.opacity = '1';
+          btn.style.pointerEvents = 'all';
+        }
+      });
+    };
+
+  // Generar preguntas en el DOM
+  form.innerHTML = ''; // Limpiar el formulario primero
+    
+    questions.forEach((it, i) => {
+      const idx = i+1;
+      const container = document.createElement('div');
+      container.className = 'q';
+      container.style.display = i === 0 ? 'grid' : 'none';
+      
+      const p = document.createElement('p');
+      p.innerHTML = `<span class="q-number">${idx}</span> ${it.q}`;
+      const opts = document.createElement('div');
+      opts.className = 'opts';
+
+      ['A','B','C','D'].forEach(letter => {
+        const id = `q${idx}-${letter}`;
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = `q${idx}`;
+        input.id = id;
+        input.value = letter;
+
+        const label = document.createElement('label');
+        label.htmlFor = id;
+        label.className = 'opt';
+        label.innerHTML = `<span>${letter}</span> <small style='opacity:.8'>${
+          letter=='A' ? '<i class="fas fa-check-circle"></i> Totalmente de acuerdo' :
+          letter=='B' ? '<i class="fas fa-check"></i> De acuerdo' :
+          letter=='C' ? '<i class="fas fa-times"></i> En desacuerdo' :
+          '<i class="fas fa-times-circle"></i> Totalmente en desacuerdo'
+        }</small>`;
+
+        // Restaurar estado si existe
+        if (savedState && savedState[i] === letter) {
+          input.checked = true;
+        }
+
+        input.addEventListener('change', () => {
+          updateProgress();
+          // Guardar estado
+          const currentState = Array.from(document.querySelectorAll('input[type="radio"]:checked')).map(el => el.value);
+          saveState(currentState);
+        });
+
+        opts.appendChild(input);
+        opts.appendChild(label);
+      });
+
+      container.appendChild(p);
+      container.appendChild(opts);
+      form.appendChild(container);
+    });
+
+    // Eventos de navegación con manejo de errores
+    if(prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        if (currentQuestion > 0) {
+          showQuestion(currentQuestion - 1);
+          prevBtn.blur(); // Quitar el foco del botón después de hacer clic
+        }
+      });
+    }
+
+    if(nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        // Usar el número lógico de preguntas (questions.length) en lugar de contar el DOM
+        if (currentQuestion < questions.length - 1) {
+          showQuestion(currentQuestion + 1);
+          nextBtn.blur(); // Quitar el foco del botón después de hacer clic
+        }
+      });
+    }
+
+    // Inicializar mostrando la primera pregunta
+    window.addEventListener('load', () => {
+      // Actualizar texto del header y progreso para reflejar el número real de preguntas
+      const headerCount = document.querySelector('header .card strong');
+      if (headerCount) headerCount.textContent = `${questions.length} Preguntas Especializadas`;
+      const progressTextEl = document.getElementById('progress-text');
+      if (progressTextEl) progressTextEl.textContent = `0 de ${questions.length}`;
+
+      showQuestion(0);
+    });
+
+    // Mapa de categorías a carreras recomendadas
+    const recommendations = {
+      'Ingeniería': ['Ingeniería Mecánica','Ingeniería Electrónica','Ingeniería en Energía'],
+      'Psicología/Social': ['Psicología','Trabajo Social','Terapia Familiar'],
+      'Matemáticas/Finanzas': ['Estadística','Actuaría','Economía'],
+      'Arte/Diseño': ['Diseño Gráfico','Comunicación Visual','Diseño Industrial'],
+      'Ciencias de la Vida': ['Biología','Biotecnología','Medicina Veterinaria'],
+      'Comunicación/Derecho': ['Comunicación','Publicidad','Relaciones Públicas'],
+      'Ambiental/Agronomía': ['Ciencias Ambientales','Ingeniería Agrónoma','Silvicultura'],
+      'Informática': ['Ingeniería en Software','Ciencias de la Computación','Desarrollo de Apps'],
+      'Derecho': ['Licenciatura en Derecho','Criminología'],
+      'Gestión/Negocios': ['Administración','Ingeniería Industrial','MBA (posgrado)'],
+      'Humanidades/Letras': ['Literatura','Filosofía','Traducción'],
+      'Investigación/Ciencias': ['Química','Física','Investigación Científica'],
+      'Finanzas/Negocios': ['Contaduría','Finanzas','Economía Empresarial'],
+      'Salud/Medicina': ['Medicina','Enfermería','Fisioterapia'],
+      'Arte Escénico/Música': ['Música','Actuación','Artes Escénicas'],
+      'Docencia/Educación': ['Pedagogía','Educación Física','Psicopedagogía'],
+      'Técnico/Calidad': ['Técnico en Mantenimiento','Control de Calidad','Talleres Especializados'],
+      'Estrategia/Gestión': ['Logística','Administración de Proyectos','Consultoría'],
+      'Sociología/Psicología': ['Sociología','Psicología Social','Antropología'],
+      'Arquitectura/Ingeniería': ['Arquitectura','Ingeniería Civil','Diseño Industrial'],
+      'Oficios/Técnico': ['Electricidad','Soldadura','Plomería (técnico)'],
+      'Medios/Comunicación': ['Periodismo','Producción Audiovisual','Gestión de Redes'],
+      'Física/Matemáticas': ['Física','Matemáticas Aplicadas','Investigación Teórica'],
+      'Emprendimiento/Negocios': ['Administración','Emprendimiento','Marketing'],
+      'Turismo/Relaciones Internacionales': ['Turismo','Relaciones Internacionales','Gestión Cultural']
+    };
+
+    // Valores para respuestas: A=4, B=3, C=2, D=1
+    const valueMap = {A:4,B:3,C:2,D:1};
+
+    document.getElementById('submitBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      const answers = [];
+      let missing = [];
+      for(let i=1;i<=questions.length;i++){
+        const els = document.getElementsByName('q'+i);
+        let val = null;
+        for(const el of els) if(el.checked) val = el.value;
+        if(!val) missing.push(i);
+        answers.push(val);
+      }
+
+      if(missing.length){
+        const r = document.getElementById('result');
+        r.style.display='block';
+        r.innerHTML = `
+          <div class="bad">
+            <i class="fas fa-exclamation-circle"></i>
+            <div>
+              <strong>Faltan respuestas</strong>
+              <p>Por favor, completa las siguientes preguntas: ${missing.join(', ')}.</p>
+            </div>
+          </div>
+        `;
+        missing.forEach(n => {
+          showQuestion(n-1);
+        });
+        r.scrollIntoView({behavior:'smooth', block:'center'});
+        return;
+      }
+
+      // Sumar puntajes por categoría (uso de weights para mayor precisión)
+      const scores = {};
+      const maxScores = {}; // máximo posible por categoría (para normalizar)
+
+      questions.forEach((q,i)=>{
+        const ans = answers[i];
+        const pts = valueMap[ans] || 0;
+
+        if(q.weights){
+          Object.entries(q.weights).forEach(([cat, w])=>{
+            scores[cat] = (scores[cat] || 0) + pts * w;
+            maxScores[cat] = (maxScores[cat] || 0) + 4 * w; // 4 es el valor máximo por respuesta (A)
+          });
+        } else if(q.cat){
+          const cat = q.cat;
+          scores[cat] = (scores[cat] || 0) + pts;
+          maxScores[cat] = (maxScores[cat] || 0) + 4;
+        }
+      });
+
+      // Calcular compatibilidades normalizadas (%) por categoría
+      const compat = {};
+      Object.keys(scores).forEach(cat => {
+        const raw = scores[cat] || 0;
+        const max = maxScores[cat] || 1;
+        compat[cat] = Math.round((raw / max) * 100);
+      });
+
+      // Ordenar por compatibilidad descendente
+      const sorted = Object.keys(compat).map(k=>({cat:k, score: Math.round(scores[k]||0), compat: compat[k]})).sort((a,b)=>b.compat - a.compat);
+      const top3 = sorted.slice(0,3);
+      
+      // Calcular estadísticas adicionales
+      const totalPoints = Object.values(scores).reduce((a,b) => a+b, 0);
+      const avgPoints = Math.round(totalPoints / Object.keys(scores).length);
+      const maxPoints = Math.max(...Object.values(scores));
+      const dominantAreas = Object.keys(scores).filter(k => scores[k] > avgPoints).length;
+
+      let html = `
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:30px">
+          <i class="fas fa-chart-pie" style="font-size:24px;color:var(--accent)"></i>
+          <h3>Tu Perfil Vocacional Detallado</h3>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:30px">
+          <div class="stat-card">
+            <i class="fas fa-trophy" style="color:var(--accent);font-size:24px"></i>
+            <div class="stat-value">${maxPoints}</div>
+            <div style="color:var(--muted)">Puntos máximos</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-chart-line" style="color:var(--accent);font-size:24px"></i>
+            <div class="stat-value">${avgPoints}</div>
+            <div style="color:var(--muted)">Promedio</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-lightbulb" style="color:var(--accent);font-size:24px"></i>
+            <div class="stat-value">${dominantAreas}</div>
+            <div style="color:var(--muted)">Áreas dominantes</div>
+          </div>
+        </div>
+      `;
+      
+      // Agregar gráfico
+      html += '<div class="chart-container"><canvas id="resultsChart"></canvas></div>';
+      
+      html += '<h4><i class="fas fa-star" style="color:var(--accent);margin-right:8px"></i>Áreas Recomendadas</h4>';
+      html += '<div class="recommendations" style="margin:20px 0">' + 
+          top3.map(t => {
+          const careerData = careerCompatibility[t.cat] || {};
+          const recs = recommendations[t.cat] ? recommendations[t.cat].slice(0,3).join(', ') : 'Carreras similares';
+          const compatibility = t.compat || Math.round((t.score / maxPoints) * 100);
+          
+          return `
+            <div style="background:rgba(255,255,255,0.02);border-radius:16px;padding:20px;margin-bottom:20px;border:1px solid rgba(255,255,255,0.05)">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
+                <h5 style="font-size:1.2em;margin:0">
+                  <span class="text-gradient">${t.cat}</span>
+                </h5>
+                <div class="tooltip" data-tooltip="Nivel de compatibilidad">
+                  <div style="background:rgba(100,255,218,0.1);padding:5px 10px;border-radius:20px;color:var(--accent)">
+                    <i class="fas fa-check-circle"></i> ${compatibility}% compatible
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-bottom:15px">
+                <div>
+                  <h6 style="color:var(--accent);margin-bottom:10px">
+                    <i class="fas fa-graduation-cap"></i> Carreras Recomendadas
+                  </h6>
+                  <ul style="list-style:none;padding:0">
+                    ${recommendations[t.cat].map(career => 
+                      `<li style="margin-bottom:5px;display:flex;align-items:center;gap:8px">
+                        <i class="fas fa-check" style="color:var(--accent)"></i>
+                        ${career}
+                      </li>`
+                    ).join('')}
+                  </ul>
+                </div>
+                ${careerData.skills ? `
+                  <div>
+                    <h6 style="color:var(--accent);margin-bottom:10px">
+                      <i class="fas fa-tools"></i> Habilidades Clave
+                    </h6>
+                    <div style="display:flex;flex-wrap:wrap;gap:5px">
+                      ${careerData.skills.map(skill => 
+                        `<span class="badge">${skill}</span>`
+                      ).join('')}
+                    </div>
+                  </div>
+                ` : ''}
+              </div>
+
+              <div style="font-size:0.9em;color:var(--muted);border-top:1px solid rgba(255,255,255,0.05);padding-top:15px;margin-top:15px">
+                <i class="fas fa-chart-line" style="color:var(--accent)"></i>
+                Puntaje total: <strong>${t.score}</strong> puntos
+              </div>
+            </div>
+          `;
+        }).join('') + '</div>';
+
+      // Consejos personalizados
+      const best = top3[0];
+      if(best){
+        html += `
+          <h4><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:8px"></i>Próximos pasos</h4>
+          <div style="background:rgba(100,255,218,0.05);padding:15px;border-radius:10px;margin-top:10px">
+            <p>Tu área principal es <strong>${best.cat}</strong>. Te recomendamos:</p>
+            <ul style="margin:10px 0;padding-left:20px">
+              <li>Investiga más sobre las carreras recomendadas</li>
+              <li>Toma cursos introductorios en plataformas</li>
+              <li>Contacta con profesionales o estudiantes del área</li>
+              <li>Participa en talleres o eventos relacionados</li>
+            </ul>
+          </div>
+        `;
+      }
+
+      
+
+      const r = document.getElementById('result');
+      r.style.display='block';
+      r.innerHTML = html;
+      r.scrollIntoView({behavior:'smooth'});
+
+      // Crear gráficos de resultados
+      const ctx = document.getElementById('resultsChart').getContext('2d');
+      
+      // Gráfico principal
+      new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: sorted.slice(0,6).map(s => s.cat),
+          datasets: [{
+            label: 'Tus Aptitudes',
+            data: sorted.slice(0,6).map(s => s.score),
+            fill: true,
+            backgroundColor: 'rgba(100,255,218,0.2)',
+            borderColor: 'rgb(100,255,218)',
+            pointBackgroundColor: 'rgb(100,255,218)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgb(100,255,218)',
+            borderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }, {
+            label: 'Promedio General',
+            data: sorted.slice(0,6).map(() => avgPoints),
+            fill: true,
+            backgroundColor: 'rgba(255,255,255,0.1)',
+            borderColor: 'rgba(255,255,255,0.3)',
+            borderDash: [5,5],
+            pointRadius: 0,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          elements: {
+            line: {
+              borderWidth: 3
+            }
+          },
+          scales: {
+            r: {
+              angleLines: {
+                color: 'rgba(255,255,255,0.1)'
+              },
+              grid: {
+                color: 'rgba(255,255,255,0.1)'
+              },
+              pointLabels: {
+                color: 'rgb(230,238,246)'
+              },
+              ticks: {
+                color: 'rgb(148,163,184)',
+                backdropColor: 'transparent'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    });
+
+      document.getElementById('resetBtn').addEventListener('click', ()=>{
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(10,25,47,0.9);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          animation: fadeIn 0.3s ease;
+        `;
+        
+        const content = document.createElement('div');
+        content.className = 'card';
+        content.style.cssText = `
+          max-width: 400px;
+          width: 90%;
+          padding: 25px;
+          text-align: center;
+          animation: float 0.3s ease;
+        `;
+        
+        content.innerHTML = `
+          <i class="fas fa-exclamation-triangle" style="font-size: 40px; color: var(--accent); margin-bottom: 20px;"></i>
+          <h3 style="margin-bottom: 15px">¿Reiniciar el test?</h3>
+          <p style="color: var(--muted); margin-bottom: 20px">
+            Se perderán todas tus respuestas actuales. ¿Estás seguro de que quieres empezar de nuevo?
+          </p>
+          <div style="display: flex; gap: 10px; justify-content: center">
+            <button id="confirmReset" style="background: #ff6b6b">
+              <i class="fas fa-trash"></i> Sí, reiniciar
+            </button>
+            <button id="cancelReset" class="secondary">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+          </div>
+        `;
+        
+        modal.appendChild(content);
+        document.body.appendChild(modal);
+        
+        const closeModal = () => {
+          modal.style.animation = 'fadeOut 0.3s ease';
+          setTimeout(() => modal.remove(), 300);
+        };
+        
+        document.getElementById('confirmReset').addEventListener('click', () => {
+          for(let i=1;i<=questions.length;i++){
+            const els = document.getElementsByName('q'+i);
+            for(const el of els) el.checked = false;
+          }
+          const r = document.getElementById('result');
+          r.style.display='none';
+          r.innerHTML='';
+          localStorage.removeItem('testVocacionalState');
+          updateProgress();
+          showQuestion(0);
+          window.scrollTo({top:0,behavior:'smooth'});
+          closeModal();
+        });
+        
+        document.getElementById('cancelReset').addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+          if(e.target === modal) closeModal();
+        });
+      });    // Inicializar progreso
+    updateProgress();
+  </script>
+</body>
+</html>
