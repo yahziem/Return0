@@ -7,10 +7,26 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 
   <style>
+    @font-face{
+      font-family:"Red Hat Display";
+      src:url("https://cdn.jsdelivr.net/fontsource/fonts/red-hat-display@5.2.6/latin-400-normal.woff2") format("woff2");
+      font-style:normal;
+      font-weight:400;
+      font-display:swap;
+    }
+    @font-face{
+      font-family:"Red Hat Display";
+      src:url("https://cdn.jsdelivr.net/fontsource/fonts/red-hat-display@5.2.6/latin-800-normal.woff2") format("woff2");
+      font-style:normal;
+      font-weight:800;
+      font-display:swap;
+    }
+
     :root{
       --brand:#172a78;
       --brand2:#5575d1;
@@ -191,8 +207,20 @@
       background:rgba(255,255,255,.08);
       padding:2px 4px;overflow:hidden;
     }
-    #nameOverlay{font-weight:800;text-align:center;white-space:nowrap}
-    #bodyOverlay{white-space:normal;line-height:1.35}
+    #nameOverlay{
+      font-family:"Red Hat Display",sans-serif;
+      font-weight:800;
+      text-align:center;
+      white-space:nowrap;
+      text-transform:uppercase;
+    }
+    #bodyOverlay{
+      font-family:"Red Hat Display",sans-serif;
+      font-weight:400;
+      white-space:normal;
+      line-height:1.35;
+    }
+    #bodyOverlay .event-highlight{font-weight:800}
     .preview-tip{
       padding:10px 16px;border-top:1px solid var(--line);
       font-size:11px;color:#667085;background:#fcfcfd;
@@ -312,6 +340,7 @@
           <div class="advanced">
             <textarea id="bodyTemplate" style="min-height:95px">por su participación en {{talleres}} dentro del evento {{evento}} llevado a cabo el {{fecha}} en la ciudad de {{ciudad}}.</textarea>
             <div class="hint">Variables disponibles: {{talleres}}, {{evento}}, {{fecha}}, {{ciudad}}</div>
+            <div class="hint">El evento se muestra automáticamente entre comillas y resaltado en negritas.</div>
             <div class="hint">Los nombres largos reducen su tamaño automáticamente para mantenerse dentro del certificado.</div>
           </div>
         </details>
