@@ -1,0 +1,3448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Panorama Nacional de Defensa — Simulación</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+
+    --bg:#080b0d;
+    --bg-soft:#0d1215;
+
+    --panel:#10161a;
+    --panel-alt:#131a1e;
+
+    --border:#29343a;
+    --border-light:#38464d;
+
+    --text:#d4dade;
+    --muted:#79868c;
+
+    --blue:#4c7f9d;
+    --green:#5b936e;
+    --yellow:#ba9b4e;
+    --orange:#b16d3f;
+    --red:#a94343;
+
+    --alert-color:#4c7f9d;
+
+}
+
+html,
+body{
+    width:100%;
+    min-height:100%;
+}
+
+body{
+
+    background:
+        radial-gradient(
+            circle at 50% 15%,
+            #182127 0%,
+            #0d1215 28%,
+            #080a0c 72%
+        );
+
+    color:var(--text);
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    overflow-x:hidden;
+}
+
+/* ==========================================
+   TEXTURA
+========================================== */
+
+body::after{
+
+    content:"";
+
+    position:fixed;
+    inset:0;
+
+    pointer-events:none;
+
+    z-index:9999;
+
+    opacity:.025;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,255,255,.08) 0,
+            rgba(255,255,255,.08) 1px,
+            transparent 1px,
+            transparent 4px
+        );
+
+}
+
+/* ==========================================
+   BOOT
+========================================== */
+
+#boot{
+
+    position:fixed;
+    inset:0;
+
+    z-index:10000;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:#050708;
+
+    transition:
+        opacity .8s ease,
+        visibility .8s ease;
+
+}
+
+#boot.hide{
+
+    opacity:0;
+    visibility:hidden;
+
+}
+
+.boot-box{
+
+    width:min(620px,88vw);
+
+}
+
+.boot-code{
+
+    color:#637078;
+
+    font-size:10px;
+
+    letter-spacing:3px;
+
+    margin-bottom:18px;
+
+}
+
+.boot-title{
+
+    font-size:clamp(28px,5vw,50px);
+
+    font-weight:300;
+
+    letter-spacing:4px;
+
+    color:#e0e5e7;
+
+}
+
+.boot-sub{
+
+    margin-top:8px;
+
+    font-size:10px;
+
+    letter-spacing:2px;
+
+    color:#69767c;
+
+}
+
+.boot-line{
+
+    margin-top:34px;
+
+    height:2px;
+
+    background:#151b1e;
+
+    overflow:hidden;
+
+}
+
+.boot-progress{
+
+    width:0;
+    height:100%;
+
+    background:#718679;
+
+    animation:
+        loadBoot 2.9s ease forwards;
+
+}
+
+@keyframes loadBoot{
+
+    to{
+        width:100%;
+    }
+
+}
+
+#bootStatus{
+
+    margin-top:12px;
+
+    font-family:Consolas,monospace;
+
+    font-size:10px;
+
+    color:#657178;
+
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+header{
+
+    height:68px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 24px;
+
+    background:
+        rgba(8,12,14,.97);
+
+    border-bottom:
+        1px solid var(--border);
+
+    position:sticky;
+    top:0;
+
+    z-index:100;
+
+}
+
+.brand{
+
+    display:flex;
+    align-items:center;
+
+    gap:14px;
+
+}
+
+.brand-mark{
+
+    width:37px;
+    height:37px;
+
+    display:grid;
+    place-items:center;
+
+    border:
+        1px solid #4c5960;
+
+    color:#c0c9cd;
+
+    font-size:11px;
+
+    font-weight:600;
+
+}
+
+.brand-text strong{
+
+    display:block;
+
+    font-size:12px;
+
+    letter-spacing:2px;
+
+    font-weight:500;
+
+}
+
+.brand-text span{
+
+    display:block;
+
+    margin-top:4px;
+
+    font-size:8px;
+
+    letter-spacing:1.6px;
+
+    color:#657178;
+
+}
+
+.header-right{
+
+    display:flex;
+    align-items:center;
+
+    gap:28px;
+
+    font-size:9px;
+
+    color:#7c898f;
+
+}
+
+.secure{
+
+    display:flex;
+    align-items:center;
+
+    gap:8px;
+
+}
+
+.secure-dot{
+
+    width:6px;
+    height:6px;
+
+    border-radius:50%;
+
+    background:#609273;
+
+    box-shadow:
+        0 0 7px rgba(96,146,115,.7);
+
+    animation:
+        securePulse 2s infinite;
+
+}
+
+@keyframes securePulse{
+
+    50%{
+        opacity:.35;
+    }
+
+}
+
+#clock{
+
+    font-family:
+        Consolas,
+        monospace;
+
+}
+
+/* ==========================================
+   MAIN
+========================================== */
+
+main{
+
+    max-width:1700px;
+
+    margin:auto;
+
+    padding:20px;
+
+}
+
+/* ==========================================
+   PAGE HEADER
+========================================== */
+
+.page-header{
+
+    display:flex;
+
+    justify-content:space-between;
+    align-items:flex-end;
+
+    margin-bottom:14px;
+
+}
+
+.page-title small{
+
+    display:block;
+
+    font-size:8px;
+
+    letter-spacing:2px;
+
+    color:#69767d;
+
+    margin-bottom:7px;
+
+}
+
+.page-title h1{
+
+    font-weight:400;
+
+    font-size:21px;
+
+    letter-spacing:.6px;
+
+}
+
+.simulation{
+
+    padding:7px 10px;
+
+    border:
+        1px solid rgba(194,157,82,.35);
+
+    color:#ae9159;
+
+    font-size:8px;
+
+    letter-spacing:1.8px;
+
+}
+
+/* ==========================================
+   MAIN GRID
+========================================== */
+
+.main-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        310px
+        minmax(500px,1fr)
+        340px;
+
+    gap:12px;
+
+}
+
+/* ==========================================
+   PANELS
+========================================== */
+
+.panel{
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.015),
+            transparent
+        ),
+        var(--panel);
+
+    border:
+        1px solid var(--border);
+
+}
+
+.panel-header{
+
+    height:41px;
+
+    padding:0 13px;
+
+    border-bottom:
+        1px solid var(--border);
+
+    display:flex;
+
+    align-items:center;
+    justify-content:space-between;
+
+    font-size:9px;
+
+    letter-spacing:1.4px;
+
+    color:#a5afb4;
+
+}
+
+.panel-code{
+
+    color:#58656b;
+
+    font-family:
+        Consolas,
+        monospace;
+
+    font-size:8px;
+
+}
+
+/* ==========================================
+   NPD
+========================================== */
+
+.npd-box{
+
+    padding:20px 15px;
+
+    border-bottom:
+        1px solid var(--border);
+
+}
+
+.npd-label{
+
+    font-size:8px;
+
+    letter-spacing:1.8px;
+
+    color:#748086;
+
+    margin-bottom:13px;
+
+}
+
+.npd-main{
+
+    display:flex;
+
+    align-items:flex-end;
+
+    gap:12px;
+
+}
+
+#npdNumber{
+
+    font-size:78px;
+
+    line-height:.85;
+
+    font-weight:300;
+
+    color:var(--alert-color);
+
+}
+
+.npd-text{
+
+    padding-bottom:5px;
+
+}
+
+#npdCode{
+
+    font-family:
+        Consolas,
+        monospace;
+
+    font-size:8px;
+
+    color:#69767c;
+
+}
+
+#npdName{
+
+    margin-top:3px;
+
+    font-size:13px;
+
+    font-weight:500;
+
+    color:var(--alert-color);
+
+}
+
+#npdDescription{
+
+    margin-top:5px;
+
+    font-size:8px;
+
+    color:#68757b;
+
+    line-height:1.5;
+
+}
+
+.npd-scale{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(5,1fr);
+
+    gap:3px;
+
+    margin-top:18px;
+
+}
+
+.npd-scale div{
+
+    height:5px;
+
+    background:#252d31;
+
+}
+
+.npd-scale div.active{
+
+    background:var(--alert-color);
+
+}
+
+/* ==========================================
+   POSTURE
+========================================== */
+
+.posture{
+
+    padding:13px 15px;
+
+    border-bottom:
+        1px solid var(--border);
+
+}
+
+.posture span{
+
+    display:block;
+
+    color:#66747a;
+
+    font-size:8px;
+
+    letter-spacing:1.3px;
+
+}
+
+.posture strong{
+
+    display:block;
+
+    margin-top:6px;
+
+    color:#b3bdc1;
+
+    font-size:10px;
+
+    font-weight:500;
+
+}
+
+/* ==========================================
+   SYSTEMS
+========================================== */
+
+.systems{
+
+    padding:5px 15px 15px;
+
+}
+
+.system{
+
+    padding:11px 0;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.04);
+
+}
+
+.system-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    font-size:8px;
+
+}
+
+.system-name{
+
+    color:#929da2;
+
+}
+
+.system-value{
+
+    color:#7ea38c;
+
+    font-family:
+        Consolas,
+        monospace;
+
+}
+
+.progress{
+
+    margin-top:7px;
+
+    height:2px;
+
+    background:#232b2f;
+
+    overflow:hidden;
+
+}
+
+.progress div{
+
+    height:100%;
+
+    background:#657b6b;
+
+    transform-origin:left;
+
+    animation:
+        progressLoad 1.8s ease;
+
+}
+
+@keyframes progressLoad{
+
+    from{
+        transform:scaleX(0);
+    }
+
+}
+
+/* ==========================================
+   MAP
+========================================== */
+
+.map-panel{
+
+    min-height:595px;
+
+}
+
+.map{
+
+    height:554px;
+
+    position:relative;
+
+    overflow:hidden;
+
+    background:
+
+        linear-gradient(
+            rgba(255,255,255,.019) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.019) 1px,
+            transparent 1px
+        ),
+
+        radial-gradient(
+            circle at center,
+            #172027 0%,
+            #0d1215 70%
+        );
+
+    background-size:
+        38px 38px,
+        38px 38px,
+        100% 100%;
+
+}
+
+.map-label{
+
+    position:absolute;
+
+    color:#46545a;
+
+    font-size:8px;
+
+    font-family:
+        Consolas,
+        monospace;
+
+}
+
+.map-label.top{
+
+    top:12px;
+    left:14px;
+
+}
+
+.map-label.bottom{
+
+    right:14px;
+    bottom:12px;
+
+}
+
+/* ==========================================
+   SVG MEXICO
+========================================== */
+
+#mexico{
+
+    position:absolute;
+
+    width:90%;
+
+    left:5%;
+    top:17%;
+
+    filter:
+        drop-shadow(
+            0 10px 15px
+            rgba(0,0,0,.35)
+        );
+
+}
+
+.land{
+
+    fill:
+        rgba(102,129,116,.11);
+
+    stroke:#586a70;
+
+    stroke-width:1.2;
+
+}
+
+.internal{
+
+    fill:none;
+
+    stroke:
+        rgba(106,129,130,.34);
+
+    stroke-width:.65;
+
+}
+
+/* ==========================================
+   NODES
+========================================== */
+
+.node{
+
+    position:absolute;
+
+    width:6px;
+    height:6px;
+
+    border-radius:50%;
+
+    background:#75917f;
+
+}
+
+.node::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    width:24px;
+    height:24px;
+
+    transform:
+        translate(-50%,-50%)
+        scale(.3);
+
+    border:
+        1px solid
+        rgba(117,145,127,.55);
+
+    border-radius:50%;
+
+    animation:
+        nodePing 2.7s infinite;
+
+}
+
+@keyframes nodePing{
+
+    to{
+
+        transform:
+            translate(-50%,-50%)
+            scale(1.4);
+
+        opacity:0;
+
+    }
+
+}
+
+.n1{left:36%;top:37%;}
+.n2{left:45%;top:45%;}
+.n3{left:54%;top:51%;}
+.n4{left:62%;top:58%;}
+.n5{left:69%;top:48%;}
+.n6{left:75%;top:62%;}
+
+/* ==========================================
+   MAP HUD
+========================================== */
+
+.map-hud{
+
+    position:absolute;
+
+    top:15px;
+    right:15px;
+
+    text-align:right;
+
+    color:#65737a;
+
+    font-family:
+        Consolas,
+        monospace;
+
+    font-size:8px;
+
+    line-height:1.7;
+
+}
+
+.map-tags{
+
+    position:absolute;
+
+    left:14px;
+    bottom:14px;
+
+    display:flex;
+
+    gap:7px;
+
+}
+
+.map-tag{
+
+    border:
+        1px solid #344047;
+
+    background:
+        rgba(8,12,14,.72);
+
+    color:#748187;
+
+    padding:6px 8px;
+
+    font-size:7px;
+
+    letter-spacing:.8px;
+
+}
+
+/* ==========================================
+   INSTITUTIONS
+========================================== */
+
+.institutions{
+
+    padding:3px 13px 13px;
+
+}
+
+.institution{
+
+    padding:12px 0;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.04);
+
+}
+
+.inst-code{
+
+    display:block;
+
+    font-family:
+        Consolas,
+        monospace;
+
+    font-size:7px;
+
+    color:#59666c;
+
+}
+
+.institution strong{
+
+    display:block;
+
+    margin-top:4px;
+
+    font-size:9px;
+
+    font-weight:500;
+
+    color:#abb4b8;
+
+}
+
+.institution small{
+
+    display:block;
+
+    margin-top:4px;
+
+    color:#616f75;
+
+    font-size:7px;
+
+    line-height:1.4;
+
+}
+
+.status{
+
+    display:inline-block;
+
+    margin-top:7px;
+
+    padding:3px 5px;
+
+    border:
+        1px solid rgba(91,147,110,.35);
+
+    color:#74a185;
+
+    font-size:7px;
+
+    letter-spacing:.8px;
+
+}
+
+/* ==========================================
+   EVENT LOG
+========================================== */
+
+.event-list{
+
+    padding:2px 13px 12px;
+
+}
+
+.event{
+
+    display:grid;
+
+    grid-template-columns:
+        47px 1fr;
+
+    gap:7px;
+
+    padding:10px 0;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.04);
+
+}
+
+.event-time{
+
+    font-family:
+        Consolas,
+        monospace;
+
+    color:#56636a;
+
+    font-size:7px;
+
+}
+
+.event-title{
+
+    font-size:8px;
+
+    color:#a0aaae;
+
+    line-height:1.4;
+
+}
+
+.event-title span{
+
+    display:block;
+
+    margin-top:3px;
+
+    color:#627077;
+
+    font-size:7px;
+
+}
+
+/* ==========================================
+   BOTTOM
+========================================== */
+
+.bottom-grid{
+
+    margin-top:12px;
+
+    display:grid;
+
+    grid-template-columns:
+        1.25fr
+        1fr
+        1fr;
+
+    gap:12px;
+
+}
+
+/* ==========================================
+   TERMINAL
+========================================== */
+
+.terminal{
+
+    height:177px;
+
+    padding:12px;
+
+    overflow:hidden;
+
+    background:#090d0f;
+
+    font-family:
+        Consolas,
+        monospace;
+
+    color:#69777d;
+
+    font-size:8px;
+
+    line-height:1.65;
+
+}
+
+.terminal-line::before{
+
+    content:">";
+
+    margin-right:7px;
+
+    color:#738f7d;
+
+}
+
+.terminal-line.warning{
+
+    color:#aa915f;
+
+}
+
+.terminal-line.critical{
+
+    color:#ad5f5f;
+
+}
+
+/* ==========================================
+   TELEMETRY
+========================================== */
+
+.metrics{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:8px;
+
+    padding:13px;
+
+}
+
+.metric{
+
+    min-height:73px;
+
+    padding:11px;
+
+    border:
+        1px solid #29343a;
+
+}
+
+.metric-label{
+
+    font-size:7px;
+
+    letter-spacing:1px;
+
+    color:#657278;
+
+}
+
+.metric-value{
+
+    margin-top:9px;
+
+    font-size:21px;
+
+    font-weight:300;
+
+    color:#bdc5c9;
+
+}
+
+.metric-value span{
+
+    font-size:8px;
+
+    color:#66747a;
+
+}
+
+/* ==========================================
+   BUTTONS
+========================================== */
+
+.controls{
+
+    padding:13px;
+
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:8px;
+
+}
+
+button{
+
+    min-height:39px;
+
+    padding:7px;
+
+    border:
+        1px solid #354148;
+
+    background:#141a1e;
+
+    color:#98a2a7;
+
+    font-size:7px;
+
+    letter-spacing:1px;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+button:hover{
+
+    background:#1a2227;
+
+    border-color:#505f66;
+
+    color:#d1d7da;
+
+}
+
+button.warning{
+
+    border-color:
+        rgba(186,155,78,.45);
+
+    color:#b49a62;
+
+}
+
+button.danger{
+
+    border-color:
+        rgba(169,67,67,.5);
+
+    color:#b45b5b;
+
+}
+
+/* ==========================================
+   NPD 1 OVERLAY
+========================================== */
+
+#alertOverlay{
+
+    position:fixed;
+    inset:0;
+
+    z-index:9000;
+
+    background:
+        rgba(13,5,6,.95);
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    opacity:0;
+    visibility:hidden;
+
+    transition:.35s;
+
+}
+
+#alertOverlay.active{
+
+    opacity:1;
+    visibility:visible;
+
+}
+
+.alert-container{
+
+    width:min(820px,90vw);
+
+    border:
+        1px solid rgba(178,67,67,.68);
+
+    background:#100d0e;
+
+}
+
+.alert-top{
+
+    height:43px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 16px;
+
+    border-bottom:
+        1px solid #382124;
+
+    font-size:8px;
+
+    letter-spacing:2px;
+
+    color:#9a6063;
+
+}
+
+.alert-body{
+
+    padding:42px;
+
+}
+
+.alert-body small{
+
+    display:block;
+
+    color:#84666a;
+
+    letter-spacing:2px;
+
+    font-size:8px;
+
+}
+
+.alert-body h2{
+
+    margin-top:10px;
+
+    font-weight:300;
+
+    font-size:
+        clamp(45px,8vw,85px);
+
+    letter-spacing:4px;
+
+    color:#e1e3e4;
+
+}
+
+.alert-body h3{
+
+    margin-top:4px;
+
+    font-size:
+        clamp(17px,3vw,28px);
+
+    font-weight:400;
+
+    letter-spacing:3px;
+
+    color:#ad6366;
+
+}
+
+.alert-divider{
+
+    height:1px;
+
+    background:#382124;
+
+    margin:27px 0;
+
+}
+
+.alert-status-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:8px;
+
+}
+
+.alert-status{
+
+    border:
+        1px solid #332224;
+
+    padding:11px;
+
+    font-size:8px;
+
+    color:#81696b;
+
+}
+
+.alert-status strong{
+
+    float:right;
+
+    font-weight:500;
+
+    color:#b97b7d;
+
+}
+
+.alert-footer{
+
+    margin-top:25px;
+
+    color:#745e61;
+
+    font-size:8px;
+
+    line-height:1.6;
+
+}
+
+/* ==========================================
+   FOOTER
+========================================== */
+
+footer{
+
+    margin-top:14px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:11px 2px;
+
+    color:#46545a;
+
+    font-size:7px;
+
+    letter-spacing:1px;
+
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media(max-width:1150px){
+
+    .main-grid{
+
+        grid-template-columns:
+            280px 1fr;
+
+    }
+
+    .right-panel{
+
+        grid-column:
+            1 / -1;
+
+    }
+
+    .bottom-grid{
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
+
+@media(max-width:760px){
+
+    header{
+
+        padding:0 12px;
+
+    }
+
+    .header-right{
+
+        display:none;
+
+    }
+
+    main{
+
+        padding:10px;
+
+    }
+
+    .main-grid{
+
+        display:block;
+
+    }
+
+    .panel{
+
+        margin-bottom:10px;
+
+    }
+
+    .map{
+
+        height:390px;
+
+    }
+
+    .simulation{
+
+        display:none;
+
+    }
+
+    .page-title h1{
+
+        font-size:17px;
+
+    }
+
+    .alert-status-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+
+<!-- ==========================================
+     BOOT
+========================================== -->
+
+<div id="boot">
+
+    <div class="boot-box">
+
+        <div class="boot-code">
+            SESIÓN SEGURA / ENTORNO SIMULADO
+        </div>
+
+        <div class="boot-title">
+            SISTEMA NACIONAL
+        </div>
+
+        <div class="boot-sub">
+            PANORAMA ESTRATÉGICO DE DEFENSA
+        </div>
+
+        <div class="boot-line">
+            <div class="boot-progress"></div>
+        </div>
+
+        <div id="bootStatus">
+            INICIANDO SISTEMA...
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     NPD 1 OVERLAY
+========================================== -->
+
+<div id="alertOverlay">
+
+    <div class="alert-container">
+
+        <div class="alert-top">
+
+            <span>
+                POSTURA NACIONAL DE DEFENSA
+            </span>
+
+            <span>
+                EJERCICIO / SIMULACIÓN
+            </span>
+
+        </div>
+
+
+        <div class="alert-body">
+
+            <small>
+                NIVEL MÁXIMO DE PREPARACIÓN
+            </small>
+
+            <h2>
+                NPD 1
+            </h2>
+
+            <h3>
+                DEFENSA INMEDIATA
+            </h3>
+
+            <div class="alert-divider"></div>
+
+
+            <div class="alert-status-grid">
+
+                <div class="alert-status">
+                    PRESIDENCIA
+                    <strong>
+                        ENLACE ACTIVO
+                    </strong>
+                </div>
+
+                <div class="alert-status">
+                    DEFENSA
+                    <strong>
+                        MÁXIMA PREPARACIÓN
+                    </strong>
+                </div>
+
+                <div class="alert-status">
+                    MARINA
+                    <strong>
+                        MÁXIMA PREPARACIÓN
+                    </strong>
+                </div>
+
+                <div class="alert-status">
+                    SEGURIDAD NACIONAL
+                    <strong>
+                        SEGUIMIENTO
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <div class="alert-footer">
+
+                AMENAZA MILITAR INMINENTE CONTRA TERRITORIO,
+                SOBERANÍA O FUERZAS NACIONALES.
+
+                <br><br>
+
+                ESTA INTERFAZ ES UNA REPRESENTACIÓN FICTICIA
+                PARA FINES DE SIMULACIÓN.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     HEADER
+========================================== -->
+
+<header>
+
+    <div class="brand">
+
+        <div class="brand-mark">
+            MX
+        </div>
+
+        <div class="brand-text">
+
+            <strong>
+                SISTEMA DE COORDINACIÓN ESTRATÉGICA
+            </strong>
+
+            <span>
+                PANORAMA NACIONAL DE DEFENSA
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="header-right">
+
+        <div class="secure">
+
+            <div class="secure-dot"></div>
+
+            SESIÓN SEGURA
+
+        </div>
+
+        <div id="clock">
+            --:--:--
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- ==========================================
+     MAIN
+========================================== -->
+
+<main>
+
+
+<div class="page-header">
+
+    <div class="page-title">
+
+        <small>
+            SITUACIÓN NACIONAL / PANEL GENERAL
+        </small>
+
+        <h1>
+            Estado de Preparación Nacional
+        </h1>
+
+    </div>
+
+    <div class="simulation">
+        ENTORNO DE SIMULACIÓN
+    </div>
+
+</div>
+
+
+<div class="main-grid">
+
+
+<!-- ==========================================
+     LEFT
+========================================== -->
+
+<div class="panel">
+
+    <div class="panel-header">
+
+        POSTURA DE DEFENSA
+
+        <span class="panel-code">
+            NPD/05
+        </span>
+
+    </div>
+
+
+    <div class="npd-box">
+
+        <div class="npd-label">
+            NIVEL DE PREPARACIÓN
+        </div>
+
+
+        <div class="npd-main">
+
+            <div id="npdNumber">
+                5
+            </div>
+
+
+            <div class="npd-text">
+
+                <div id="npdCode">
+                    NPD 5
+                </div>
+
+                <div id="npdName">
+                    NORMAL
+                </div>
+
+                <div id="npdDescription">
+                    Operación ordinaria y preparación institucional habitual.
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="npd-scale">
+
+            <div class="active"></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+
+        </div>
+
+    </div>
+
+
+    <div class="posture">
+
+        <span>
+            POSTURA OPERATIVA
+        </span>
+
+        <strong id="npdPosture">
+            PREPARACIÓN NORMAL
+        </strong>
+
+    </div>
+
+
+    <div class="systems">
+
+
+        <div class="system">
+
+            <div class="system-top">
+
+                <span class="system-name">
+                    COMUNICACIONES
+                </span>
+
+                <span class="system-value">
+                    99.2%
+                </span>
+
+            </div>
+
+            <div class="progress">
+
+                <div style="width:99.2%"></div>
+
+            </div>
+
+        </div>
+
+
+        <div class="system">
+
+            <div class="system-top">
+
+                <span class="system-name">
+                    ENLACES REGIONALES
+                </span>
+
+                <span class="system-value">
+                    96.8%
+                </span>
+
+            </div>
+
+            <div class="progress">
+
+                <div style="width:96.8%"></div>
+
+            </div>
+
+        </div>
+
+
+        <div class="system">
+
+            <div class="system-top">
+
+                <span class="system-name">
+                    TELEMETRÍA
+                </span>
+
+                <span class="system-value">
+                    97.4%
+                </span>
+
+            </div>
+
+            <div class="progress">
+
+                <div style="width:97.4%"></div>
+
+            </div>
+
+        </div>
+
+
+        <div class="system">
+
+            <div class="system-top">
+
+                <span class="system-name">
+                    RED SEGURA
+                </span>
+
+                <span class="system-value">
+                    100%
+                </span>
+
+            </div>
+
+            <div class="progress">
+
+                <div style="width:100%"></div>
+
+            </div>
+
+        </div>
+
+
+        <div class="system">
+
+            <div class="system-top">
+
+                <span class="system-name">
+                    DISPONIBILIDAD GENERAL
+                </span>
+
+                <span class="system-value">
+                    98.1%
+                </span>
+
+            </div>
+
+            <div class="progress">
+
+                <div style="width:98.1%"></div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     MAP
+========================================== -->
+
+<div class="panel map-panel">
+
+    <div class="panel-header">
+
+        PANORAMA TERRITORIAL
+
+        <span class="panel-code">
+            GEO/NACIONAL
+        </span>
+
+    </div>
+
+
+    <div class="map">
+
+
+        <div class="map-label top">
+            TERRITORIO NACIONAL / SECTOR GEO-01
+        </div>
+
+
+        <div class="map-label bottom">
+            MAPA REFERENCIAL / NO OPERATIVO
+        </div>
+
+
+        <svg
+        id="mexico"
+        viewBox="0 0 900 480"
+        >
+
+            <!-- Baja California -->
+
+            <path
+            class="land"
+            d="
+            M105 60
+            L143 70
+            L156 112
+            L173 152
+            L174 192
+            L191 230
+            L181 258
+            L157 238
+            L146 199
+            L125 165
+            L115 123
+            Z
+            " />
+
+
+            <!-- México continental -->
+
+            <path
+            class="land"
+            d="
+            M181 76
+            L260 81
+            L319 99
+            L380 125
+            L440 140
+            L509 157
+            L568 175
+            L623 187
+            L671 205
+            L714 199
+            L768 212
+            L800 238
+            L777 260
+            L740 253
+            L717 273
+            L689 291
+            L652 294
+            L621 312
+            L583 313
+            L551 295
+            L516 298
+            L481 283
+            L450 269
+            L416 266
+            L390 244
+            L360 231
+            L325 220
+            L291 201
+            L258 179
+            L229 149
+            L203 119
+            Z
+            " />
+
+
+            <!-- Yucatán -->
+
+            <path
+            class="land"
+            d="
+            M650 294
+            L704 294
+            L752 305
+            L796 301
+            L824 317
+            L807 344
+            L773 349
+            L747 376
+            L718 369
+            L699 340
+            L665 328
+            Z
+            " />
+
+
+            <!-- Líneas interiores decorativas -->
+
+            <path
+            class="internal"
+            d="
+            M260 82
+            L274 177
+            L325 220
+            " />
+
+            <path
+            class="internal"
+            d="
+            M380 125
+            L374 229
+            L416 266
+            " />
+
+            <path
+            class="internal"
+            d="
+            M509 157
+            L490 283
+            " />
+
+            <path
+            class="internal"
+            d="
+            M623 187
+            L621 312
+            " />
+
+            <path
+            class="internal"
+            d="
+            M714 199
+            L699 340
+            " />
+
+        </svg>
+
+
+        <div class="node n1"></div>
+        <div class="node n2"></div>
+        <div class="node n3"></div>
+        <div class="node n4"></div>
+        <div class="node n5"></div>
+        <div class="node n6"></div>
+
+
+        <div class="map-hud">
+
+            GEO LINK ACTIVE<br>
+
+            ACTUALIZACIÓN:
+            <span id="mapTime">
+                --:--:--
+            </span>
+
+            <br>
+
+            NODOS:
+            32 / 32
+
+            <br>
+
+            ESTADO:
+            NOMINAL
+
+        </div>
+
+
+        <div class="map-tags">
+
+            <div class="map-tag">
+                TERRITORIO NACIONAL
+            </div>
+
+            <div class="map-tag">
+                RED SINCRONIZADA
+            </div>
+
+            <div class="map-tag">
+                SITUACIÓN ESTABLE
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     RIGHT
+========================================== -->
+
+<div class="panel right-panel">
+
+    <div class="panel-header">
+
+        COORDINACIÓN INSTITUCIONAL
+
+        <span class="panel-code">
+            INST/01
+        </span>
+
+    </div>
+
+
+    <div class="institutions">
+
+
+        <div class="institution">
+
+            <span class="inst-code">
+                AUTORIDAD SUPERIOR
+            </span>
+
+            <strong>
+                PRESIDENCIA DE LA REPÚBLICA
+            </strong>
+
+            <small>
+                Comandancia Suprema de las Fuerzas Armadas
+            </small>
+
+            <span class="status">
+                ENLACE ACTIVO
+            </span>
+
+        </div>
+
+
+        <div class="institution">
+
+            <span class="inst-code">
+                DEFENSA
+            </span>
+
+            <strong>
+                SECRETARÍA DE LA DEFENSA NACIONAL
+            </strong>
+
+            <small>
+                Ejército Mexicano · Fuerza Aérea Mexicana · Guardia Nacional
+            </small>
+
+            <span class="status">
+                OPERATIVO
+            </span>
+
+        </div>
+
+
+        <div class="institution">
+
+            <span class="inst-code">
+                EMCDN
+            </span>
+
+            <strong>
+                ESTADO MAYOR CONJUNTO DE LA DEFENSA NACIONAL
+            </strong>
+
+            <small>
+                Planeación y coordinación militar
+            </small>
+
+            <span class="status">
+                OPERATIVO
+            </span>
+
+        </div>
+
+
+        <div class="institution">
+
+            <span class="inst-code">
+                MARINA
+            </span>
+
+            <strong>
+                SECRETARÍA DE MARINA
+            </strong>
+
+            <small>
+                Armada de México
+            </small>
+
+            <span class="status">
+                OPERATIVO
+            </span>
+
+        </div>
+
+
+        <div class="institution">
+
+            <span class="inst-code">
+                SEGURIDAD NACIONAL
+            </span>
+
+            <strong>
+                CONSEJO DE SEGURIDAD NACIONAL
+            </strong>
+
+            <small>
+                Coordinación institucional
+            </small>
+
+            <span class="status">
+                SEGUIMIENTO
+            </span>
+
+        </div>
+
+
+        <div class="institution">
+
+            <span class="inst-code">
+                INTEL
+            </span>
+
+            <strong>
+                SSPC / CENTRO NACIONAL DE INTELIGENCIA
+            </strong>
+
+            <small>
+                Inteligencia y análisis de seguridad nacional
+            </small>
+
+            <span class="status">
+                ENLACE ACTIVO
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="panel-header">
+
+        EVENTOS DEL SISTEMA
+
+        <span class="panel-code">
+            EVT/LOG
+        </span>
+
+    </div>
+
+
+    <div class="event-list" id="eventList">
+
+        <div class="event">
+
+            <div class="event-time">
+                02:14
+            </div>
+
+            <div class="event-title">
+
+                Sincronización nacional confirmada
+
+                <span>
+                    32 nodos respondiendo
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="event">
+
+            <div class="event-time">
+                02:10
+            </div>
+
+            <div class="event-title">
+
+                Red de comunicaciones estable
+
+                <span>
+                    Estado nominal
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="event">
+
+            <div class="event-time">
+                02:04
+            </div>
+
+            <div class="event-title">
+
+                Revisión de integridad completada
+
+                <span>
+                    Sin incidencias críticas
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+<!-- ==========================================
+     BOTTOM
+========================================== -->
+
+<div class="bottom-grid">
+
+
+<div class="panel">
+
+    <div class="panel-header">
+
+        CONSOLA DEL SISTEMA
+
+        <span class="panel-code">
+            SYS/LOG
+        </span>
+
+    </div>
+
+    <div
+    class="terminal"
+    id="terminal"
+    ></div>
+
+</div>
+
+
+<div class="panel">
+
+    <div class="panel-header">
+
+        TELEMETRÍA
+
+        <span class="panel-code">
+            DATA/LIVE
+        </span>
+
+    </div>
+
+
+    <div class="metrics">
+
+        <div class="metric">
+
+            <div class="metric-label">
+                LATENCIA
+            </div>
+
+            <div class="metric-value">
+
+                <span id="latencyNumber" style="font-size:21px;color:#bdc5c9;">
+                    12
+                </span>
+
+                <span>
+                    ms
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                NODOS ACTIVOS
+            </div>
+
+            <div class="metric-value">
+
+                32
+
+                <span>
+                    / 32
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                DISPONIBILIDAD
+            </div>
+
+            <div class="metric-value">
+
+                98.1
+
+                <span>
+                    %
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                INCIDENCIAS CRÍTICAS
+            </div>
+
+            <div class="metric-value">
+
+                00
+
+                <span>
+                    ACTIVAS
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="panel">
+
+    <div class="panel-header">
+
+        CONTROL DE SIMULACIÓN
+
+        <span class="panel-code">
+            SIM/CTRL
+        </span>
+
+    </div>
+
+
+    <div class="controls">
+
+
+        <button onclick="setNPD(5)">
+            NPD 5 / NORMAL
+        </button>
+
+
+        <button onclick="setNPD(4)">
+            NPD 4 / VIGILANCIA
+        </button>
+
+
+        <button
+        class="warning"
+        onclick="setNPD(3)"
+        >
+            NPD 3 / ELEVADA
+        </button>
+
+
+        <button
+        class="warning"
+        onclick="setNPD(2)"
+        >
+            NPD 2 / MÁXIMA
+        </button>
+
+
+        <button onclick="runDiagnostic()">
+            DIAGNÓSTICO
+        </button>
+
+
+        <button
+        class="danger"
+        onclick="setNPD(1)"
+        >
+            NPD 1 / DEFENSA
+        </button>
+
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+<footer>
+
+    <span>
+        INTERFAZ CONCEPTUAL / SISTEMA DE SIMULACIÓN
+    </span>
+
+    <span>
+        NO ES UN SISTEMA OFICIAL DEL GOBIERNO DE MÉXICO
+    </span>
+
+</footer>
+
+
+</main>
+
+
+<script>
+
+/* ==========================================
+   BOOT
+========================================== */
+
+const bootMessages = [
+
+    "VALIDANDO SESIÓN...",
+
+    "ESTABLECIENDO CANAL SEGURO...",
+
+    "SINCRONIZANDO NODOS REGIONALES...",
+
+    "CARGANDO PANORAMA NACIONAL...",
+
+    "VERIFICANDO TELEMETRÍA...",
+
+    "SISTEMA DISPONIBLE"
+
+];
+
+let bootIndex = 0;
+
+const bootStatus =
+    document.getElementById(
+        "bootStatus"
+    );
+
+const bootInterval =
+    setInterval(() => {
+
+        bootStatus.textContent =
+            bootMessages[
+                bootIndex
+            ];
+
+        bootIndex++;
+
+        if(
+            bootIndex >=
+            bootMessages.length
+        ){
+
+            clearInterval(
+                bootInterval
+            );
+
+        }
+
+    },470);
+
+
+setTimeout(() => {
+
+    document
+        .getElementById("boot")
+        .classList
+        .add("hide");
+
+},3150);
+
+
+/* ==========================================
+   CLOCK
+========================================== */
+
+function updateClock(){
+
+    const now =
+        new Date();
+
+    const time =
+        now.toLocaleTimeString(
+            "es-MX",
+            {
+                hour12:false
+            }
+        );
+
+    const date =
+        now.toLocaleDateString(
+            "es-MX"
+        );
+
+    document
+        .getElementById("clock")
+        .textContent =
+        `${date} / ${time}`;
+
+    document
+        .getElementById("mapTime")
+        .textContent =
+        time;
+
+}
+
+updateClock();
+
+setInterval(
+    updateClock,
+    1000
+);
+
+
+/* ==========================================
+   NPD LEVELS
+========================================== */
+
+const npdLevels = {
+
+    5:{
+
+        code:"NPD 5",
+
+        name:"NORMAL",
+
+        color:"#4c7f9d",
+
+        description:
+            "Operación ordinaria y preparación institucional habitual.",
+
+        posture:
+            "PREPARACIÓN NORMAL"
+
+    },
+
+    4:{
+
+        code:"NPD 4",
+
+        name:"VIGILANCIA REFORZADA",
+
+        color:"#5b936e",
+
+        description:
+            "Incremento preventivo de vigilancia, inteligencia y medidas de seguridad.",
+
+        posture:
+            "VIGILANCIA REFORZADA"
+
+    },
+
+    3:{
+
+        code:"NPD 3",
+
+        name:"PREPARACIÓN ELEVADA",
+
+        color:"#ba9b4e",
+
+        description:
+            "Disponibilidad institucional superior a condiciones ordinarias.",
+
+        posture:
+            "DISPONIBILIDAD ELEVADA"
+
+    },
+
+    2:{
+
+        code:"NPD 2",
+
+        name:"PREPARACIÓN MÁXIMA",
+
+        color:"#a94b43",
+
+        description:
+            "Crisis grave. Alta disponibilidad de capacidades nacionales de defensa.",
+
+        posture:
+            "ALTA DISPONIBILIDAD"
+
+    },
+
+    1:{
+
+        code:"NPD 1",
+
+        name:"DEFENSA INMEDIATA",
+
+        color:"#d7dadd",
+
+        description:
+            "Amenaza militar inminente contra territorio, soberanía o fuerzas nacionales.",
+
+        posture:
+            "MÁXIMA PREPARACIÓN"
+
+    }
+
+};
+
+
+/* ==========================================
+   SET NPD
+========================================== */
+
+function setNPD(level){
+
+    const config =
+        npdLevels[level];
+
+
+    const number =
+        document.getElementById(
+            "npdNumber"
+        );
+
+    const code =
+        document.getElementById(
+            "npdCode"
+        );
+
+    const name =
+        document.getElementById(
+            "npdName"
+        );
+
+    const description =
+        document.getElementById(
+            "npdDescription"
+        );
+
+    const posture =
+        document.getElementById(
+            "npdPosture"
+        );
+
+
+    number.textContent =
+        level;
+
+    code.textContent =
+        config.code;
+
+    name.textContent =
+        config.name;
+
+    description.textContent =
+        config.description;
+
+    posture.textContent =
+        config.posture;
+
+
+    document
+        .documentElement
+        .style
+        .setProperty(
+            "--alert-color",
+            config.color
+        );
+
+
+    updateScale(
+        level,
+        config.color
+    );
+
+
+    addTerminal(
+        `POSTURA ACTUALIZADA: ${config.code} / ${config.name}`,
+        level <= 2
+            ? "critical"
+            : "warning"
+    );
+
+
+    addEvent(
+        config.name,
+        config.posture
+    );
+
+
+    if(level === 1){
+
+        showDefenseAlert();
+
+    }
+
+}
+
+
+/* ==========================================
+   SCALE
+========================================== */
+
+function updateScale(
+    level,
+    color
+){
+
+    const bars =
+        document.querySelectorAll(
+            ".npd-scale div"
+        );
+
+    bars.forEach(bar => {
+
+        bar.classList.remove(
+            "active"
+        );
+
+        bar.style.background =
+            "#252d31";
+
+    });
+
+
+    const count =
+        6 - level;
+
+
+    for(
+        let i=0;
+        i<count;
+        i++
+    ){
+
+        bars[i]
+            .classList
+            .add("active");
+
+        bars[i]
+            .style
+            .background =
+            color;
+
+    }
+
+}
+
+
+/* ==========================================
+   TERMINAL
+========================================== */
+
+const terminal =
+    document.getElementById(
+        "terminal"
+    );
+
+
+function systemTime(){
+
+    return new Date()
+        .toLocaleTimeString(
+            "es-MX",
+            {
+                hour12:false
+            }
+        );
+
+}
+
+
+function addTerminal(
+    message,
+    type=""
+){
+
+    const line =
+        document
+        .createElement(
+            "div"
+        );
+
+    line.className =
+        `terminal-line ${type}`;
+
+    line.textContent =
+        `[${systemTime()}] ${message}`;
+
+
+    terminal.appendChild(
+        line
+    );
+
+
+    while(
+        terminal.children.length > 12
+    ){
+
+        terminal
+            .removeChild(
+                terminal.firstChild
+            );
+
+    }
+
+
+    terminal.scrollTop =
+        terminal.scrollHeight;
+
+}
+
+
+/* ==========================================
+   INITIAL TERMINAL
+========================================== */
+
+const initialMessages = [
+
+    "Sesión segura establecida.",
+
+    "Integridad del sistema verificada.",
+
+    "Enlace territorial activo.",
+
+    "32 nodos regionales respondiendo.",
+
+    "Telemetría sincronizada.",
+
+    "Comunicaciones dentro de parámetros.",
+
+    "Sin incidencias críticas detectadas."
+
+];
+
+
+initialMessages.forEach(
+    (message,index) => {
+
+        setTimeout(() => {
+
+            addTerminal(
+                message
+            );
+
+        },index * 320);
+
+    }
+);
+
+
+/* ==========================================
+   AUTO LOGS
+========================================== */
+
+const automaticMessages = [
+
+    "Heartbeat de red recibido.",
+
+    "Nodo regional sincronizado.",
+
+    "Canal seguro estable.",
+
+    "Actualización territorial recibida.",
+
+    "Telemetría dentro de parámetros.",
+
+    "Verificación automática completada.",
+
+    "Integridad de comunicaciones confirmada."
+
+];
+
+
+setInterval(() => {
+
+    const message =
+        automaticMessages[
+            Math.floor(
+                Math.random() *
+                automaticMessages.length
+            )
+        ];
+
+    addTerminal(
+        message
+    );
+
+},4800);
+
+
+/* ==========================================
+   EVENT LIST
+========================================== */
+
+function addEvent(
+    title,
+    subtitle
+){
+
+    const list =
+        document.getElementById(
+            "eventList"
+        );
+
+
+    const event =
+        document.createElement(
+            "div"
+        );
+
+    event.className =
+        "event";
+
+
+    const time =
+        document.createElement(
+            "div"
+        );
+
+    time.className =
+        "event-time";
+
+    time.textContent =
+        systemTime()
+            .substring(0,5);
+
+
+    const text =
+        document.createElement(
+            "div"
+        );
+
+    text.className =
+        "event-title";
+
+
+    text.innerHTML =
+        `${title}
+        <span>
+        ${subtitle}
+        </span>`;
+
+
+    event.appendChild(
+        time
+    );
+
+    event.appendChild(
+        text
+    );
+
+
+    list.prepend(
+        event
+    );
+
+
+    while(
+        list.children.length > 4
+    ){
+
+        list.removeChild(
+            list.lastChild
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   LATENCY
+========================================== */
+
+setInterval(() => {
+
+    const latency =
+        9 +
+        Math.floor(
+            Math.random()*8
+        );
+
+    document
+        .getElementById(
+            "latencyNumber"
+        )
+        .textContent =
+        latency;
+
+},2200);
+
+
+/* ==========================================
+   DIAGNOSTIC
+========================================== */
+
+function runDiagnostic(){
+
+    addTerminal(
+        "INICIANDO DIAGNÓSTICO GENERAL..."
+    );
+
+
+    setTimeout(() => {
+
+        addTerminal(
+            "Comunicaciones: OK"
+        );
+
+    },500);
+
+
+    setTimeout(() => {
+
+        addTerminal(
+            "Enlaces regionales: OK"
+        );
+
+    },900);
+
+
+    setTimeout(() => {
+
+        addTerminal(
+            "Telemetría: OK"
+        );
+
+    },1300);
+
+
+    setTimeout(() => {
+
+        addTerminal(
+            "Red segura: OK"
+        );
+
+    },1700);
+
+
+    setTimeout(() => {
+
+        addTerminal(
+            "32/32 nodos disponibles"
+        );
+
+    },2100);
+
+
+    setTimeout(() => {
+
+        addTerminal(
+            "DIAGNÓSTICO FINALIZADO"
+        );
+
+    },2500);
+
+}
+
+
+/* ==========================================
+   ALERT OVERLAY
+========================================== */
+
+let alertTimeout;
+
+
+function showDefenseAlert(){
+
+    const overlay =
+        document.getElementById(
+            "alertOverlay"
+        );
+
+
+    overlay.classList.add(
+        "active"
+    );
+
+
+    addTerminal(
+        "NPD 1 ACTIVADO DENTRO DEL ENTORNO DE SIMULACIÓN.",
+        "critical"
+    );
+
+
+    playAlertTone();
+
+
+    clearTimeout(
+        alertTimeout
+    );
+
+
+    alertTimeout =
+        setTimeout(() => {
+
+            overlay
+                .classList
+                .remove(
+                    "active"
+                );
+
+        },5200);
+
+}
+
+
+/* ==========================================
+   SOUND
+========================================== */
+
+function playAlertTone(){
+
+    const AudioContext =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+
+    if(
+        !AudioContext
+    ) return;
+
+
+    const ctx =
+        new AudioContext();
+
+
+    const oscillator =
+        ctx.createOscillator();
+
+
+    const gain =
+        ctx.createGain();
+
+
+    oscillator.type =
+        "sine";
+
+
+    oscillator.frequency.value =
+        440;
+
+
+    gain.gain.value =
+        .025;
+
+
+    oscillator.connect(
+        gain
+    );
+
+
+    gain.connect(
+        ctx.destination
+    );
+
+
+    oscillator.start();
+
+
+    let high = false;
+
+
+    const toneInterval =
+        setInterval(() => {
+
+            high = !high;
+
+
+            oscillator
+                .frequency
+                .setValueAtTime(
+
+                    high
+                        ? 520
+                        : 440,
+
+                    ctx.currentTime
+
+                );
+
+        },650);
+
+
+    setTimeout(() => {
+
+        clearInterval(
+            toneInterval
+        );
+
+
+        gain
+            .gain
+            .exponentialRampToValueAtTime(
+
+                .0001,
+                ctx.currentTime + .35
+
+            );
+
+
+        oscillator.stop(
+            ctx.currentTime + .4
+        );
+
+    },4000);
+
+}
+
+
+/* ==========================================
+   MAP ACTIVITY
+========================================== */
+
+const nodes =
+    document.querySelectorAll(
+        ".node"
+    );
+
+
+setInterval(() => {
+
+    const node =
+        nodes[
+            Math.floor(
+                Math.random() *
+                nodes.length
+            )
+        ];
+
+
+    node.style.background =
+        "#a88d55";
+
+
+    setTimeout(() => {
+
+        node.style.background =
+            "#75917f";
+
+    },900);
+
+},3300);
+
+
+/* ==========================================
+   START LEVEL
+========================================== */
+
+setNPD(5);
+
+</script>
+
+</body>
+</html>
