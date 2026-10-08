@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Acceso únicamente a los datos de la propia cuenta autenticada.
+    // La app NO ofrece registro público; crea la cuenta en Authentication de Firebase.
+    function own(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    match /stores/{userId}/meta/{metaId} {
+      allow read, write: if own(userId) && metaId == 'state';
+    }
+    match /stores/{userId}/{name}/{documentId} {
+      allow read, write: if own(userId)
+        && name in [
+          'products', 'inventoryLogs', 'sales', 'customers', 'customerMoves',
+          'suppliers', 'supplierMoves', 'orders', 'expenses', 'cashSessions',
+          'cashMovements'
+        ];
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

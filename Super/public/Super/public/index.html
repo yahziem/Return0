@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0d10">
+  <meta name="description" content="Súper La Muñeca: ventas, inventario por código de barras, caja, fiados y proveedores desde tu celular.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="dark.css">
+  <title>Súper La Muñeca · Mi tienda</title>
+</head>
+<body>
+  <section id="authGate" class="auth-gate" aria-label="Acceso a Súper La Muñeca">
+    <div class="auth-card">
+      <div class="auth-logo">M<span>✳</span></div>
+      <div class="auth-kicker">SÚPER LA MUÑECA</div>
+      <h1 id="authTitle">Cargando tu tienda</h1>
+      <p id="authText">Conectando con Firebase…</p>
+      <form id="authForm" hidden>
+        <label for="authEmail">Correo electrónico</label>
+        <input id="authEmail" type="email" autocomplete="username" placeholder="tunombre@correo.com" required>
+        <label for="authPassword">Contraseña</label>
+        <input id="authPassword" type="password" autocomplete="current-password" placeholder="Tu contraseña" required>
+        <button class="btn btn-primary btn-block" type="submit">Entrar a mi tienda →</button>
+        <p id="authError" class="auth-error" aria-live="polite"></p>
+      </form>
+      <button class="btn btn-outline btn-block" id="authRetry" hidden>Reintentar</button>
+      <small>Tu negocio, siempre bajo control.</small>
+    </div>
+  </section>
+  <div id="app" hidden>
+    <header class="topbar">
+      <div class="brandmark" aria-hidden="true">M<span>✳</span></div>
+      <div class="brandtext"><strong>Súper La Muñeca</strong><small>Mi tienda, bajo control</small><small id="cloudBadge" class="cloud-badge">◌ Conectando</small></div>
+      <button class="icon-button" data-act="settings" aria-label="Configuración y respaldo" title="Configuración y respaldo"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.8 1.8 0 0 0 .36 2l.06.07-2.18 2.18-.07-.06a1.8 1.8 0 0 0-2-.36 1.8 1.8 0 0 0-1.06 1.64V21h-3v-.16A1.8 1.8 0 0 0 10.45 19a1.8 1.8 0 0 0-2 .36l-.07.06-2.18-2.18.06-.07a1.8 1.8 0 0 0 .36-2A1.8 1.8 0 0 0 5 14.11H4v-3h1a1.8 1.8 0 0 0 1.64-1.06 1.8 1.8 0 0 0-.36-2L6.2 8l2.18-2.18.07.06a1.8 1.8 0 0 0 2 .36A1.8 1.8 0 0 0 11.5 4.6V4h3v.6a1.8 1.8 0 0 0 1.06 1.64 1.8 1.8 0 0 0 2-.36l.07-.06L19.82 8l-.06.07a1.8 1.8 0 0 0-.36 2A1.8 1.8 0 0 0 21 11.11h.5v3H21A1.8 1.8 0 0 0 19.4 15Z"/></svg></button>
+    </header>
+    <main id="screen" role="main"></main>
+    <nav class="bottom-nav" aria-label="Navegación principal">
+      <button class="nav-item active" data-act="nav" data-tab="home"><span class="nav-icon">⌂</span><span>Inicio</span></button>
+      <button class="nav-item" data-act="nav" data-tab="sell"><span class="nav-icon">▣</span><span>Vender</span></button>
+      <button class="nav-item" data-act="nav" data-tab="inventory"><span class="nav-icon">◫</span><span>Inventario</span></button>
+      <button class="nav-item" data-act="nav" data-tab="debts"><span class="nav-icon">⇄</span><span>Deudas</span></button>
+      <button class="nav-item" data-act="nav" data-tab="orders"><span class="nav-icon">◈</span><span>Pedidos</span></button>
+    </nav>
+  </div>
+  <div id="modalRoot" aria-live="polite"></div>
+  <div id="toastRoot" aria-live="polite"></div>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js" defer></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
+  <script src="firebase-config.js" defer></script>
+  <script src="firebase-cloud.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>

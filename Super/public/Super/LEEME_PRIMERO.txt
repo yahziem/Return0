@@ -1,0 +1,15 @@
+SÚPER LA MUÑECA - FIREBASE PRO 3.0
+
+1. Lee INSTALACION.md (paso a paso, en español).
+2. Crea tu proyecto en https://console.firebase.google.com
+3. Activa Firestore (modo producción) y Authentication (correo/contraseña).
+4. Crea una cuenta de usuario para la tienda desde Firebase Console.
+5. Copia firebaseConfig en public/firebase-config.js.
+6. Instala firebase-tools, inicia sesión y publica Hosting y reglas:
+   firebase deploy --project TU_ID_DE_PROYECTO --only hosting,firestore:rules
+7. Abre https://TU_ID_DE_PROYECTO.web.app en tu celular.
+
+El código incluye: interfaz oscura, punto de venta, barras, inventario, caja,
+clientes, fiados, proveedores, pedidos, sincronización Firebase y respaldo JSON.
+
+Nunca publiques contraseñas ni llaves privadas en archivos web.
